@@ -1,8 +1,8 @@
-import actionNames from './constants';
+import { actionNames } from './constants';
 
 export const loadJsonApiEntityData = (data) => {
     return {
-        type: actionNames.INSERT_OR_UPDATE_ENTITIES,
+        type: actionNames.LOAD_JSON_API_ENTITY_DATA,
         data
     };
 };
@@ -26,3 +26,12 @@ export const removeRelationshipFromEntity = (entityKey, entityId, relationshipKe
         relationshipId
     };
 };
+
+export const updateEntity = (entityKey, entityId, data) => {
+    return {
+        type: actionNames.UPDATE_ENTITY,
+        entityKey,
+        entityId,
+        data
+    };
+}

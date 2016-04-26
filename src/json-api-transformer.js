@@ -109,3 +109,13 @@ const removeEntityIdFromRelationshipArray = (entity, relationshipKey, relationsh
         [relationshipKey]: entity[relationshipKey].filter(id => id !== relationshipId)
     };
 }
+
+export const updateEntity = (state, entityKey, entityId, data) => {
+    return insertOrUpdateEntities(state, {
+        data: {
+            type: entityKey,
+            id: entityId,
+            attributes: data
+        }
+    })
+}

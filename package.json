@@ -2,9 +2,10 @@
     "name": "giadc-redux-json-api",
     "version": "0.1.0",
     "description": "Reducer, actions, and helper functions for managing JSON API entities in Redux",
-    "main": "./src/giadc-redux-json-api.js",
+    "main": "./lib/giadc-redux-json-api.js",
     "scripts": {
         "build": "babel --presets es2015,stage-0 -d lib/ src/",
+        "watch": "babel --watch --presets es2015,stage-0 -d lib/ src/",
         "test": "echo \"Error: no test specified\" && exit 1",
         "prepublish": "npm run compile"
     },

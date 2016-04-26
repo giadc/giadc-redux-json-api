@@ -1,11 +1,11 @@
 import { actionNames } from './constants';
 import {
-    insertOrUpdateEntities, addRelationshipToEntity, removeRelationshipFromEntity
+    insertOrUpdateEntities, addRelationshipToEntity, removeRelationshipFromEntity, updateEntity
 } from './json-api-transformer';
 
 export const reducer = (state = {}, action) => {
     switch (action.type) {
-        case actionNames.INSERT_OR_UPDATE_ENTITIES:
+        case actionNames.LOAD_JSON_API_ENTITY_DATA:
             return insertOrUpdateEntities(state, action.data);
 
         case actionNames.ADD_RELATIONSHIP_TO_ENTITY:
@@ -24,6 +24,14 @@ export const reducer = (state = {}, action) => {
                 action.entityId,
                 action.relationshipKey,
                 action.relationshipId
+            );
+
+        case actionNames.UPDATE_ENTITY:
+            return updateEntity(
+                state,
+                action.entityKey,
+                action.entityId,
+                action.data
             );
 
         default:

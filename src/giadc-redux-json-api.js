@@ -3,5 +3,6 @@ export { reducer } from './reducer';
 export { 
     loadJsonApiEntityData,
     addRelationshipToEntity,
-    removeRelationshipFromEntity 
+    removeRelationshipFromEntity,
+    updateEntity
 } from './actions';
