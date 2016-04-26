@@ -37,7 +37,7 @@ import { addRelationshipToEntity, removeRelationshipFromEntity, updateEntity } f
 addRelationshipToEntity(entityKey, entityId, relationshipKey, relationshipJsonApiObject);
     
 // dispatch(removeRelationshipFromEntity('article', 54321, 'readers', 12345));
-updateEntity(entityKey, entityId, relationshipKey, relationshipId);
+removeRelationshipFromEntity(entityKey, entityId, relationshipKey, relationshipId);
 
 /**
  * dispatch(updateEntity('article', articleId, {

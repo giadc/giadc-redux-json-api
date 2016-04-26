@@ -7,7 +7,11 @@
         "build": "babel --presets es2015,stage-0 -d lib/ src/",
         "watch": "babel --watch --presets es2015,stage-0 -d lib/ src/",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "prepublish": "npm run compile"
+        "prepublish": "npm run build"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/giadc/giadc-redux-json-api.git"
     },
     "author": "Ryan Marganti <rmarganti@gannett.com>",
     "license": "MIT",
