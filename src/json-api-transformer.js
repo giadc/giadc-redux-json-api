@@ -15,15 +15,15 @@ export const insertOrUpdateEntities = (state, payload) => {
 
 const insertOrUpdateEntity = (state, entity) => {
     let pluralKey = pluralize(entity.type);
-    let entities = state[pluralKey] || [];
-    let existingEntity = entities.filter(e => e.id == entity.id)[0] || {};
+    let entities = state[pluralKey] || {};
+    let existingEntity = entities[entity.id] || {};
     
     return {
         ...state,
-        [pluralKey]: [
-            ...entities.filter(e => e.id !== entity.id),
-            {...existingEntity, ...transformEntity(entity)}
-        ]
+        [pluralKey]: {
+            ...entities,
+            [entity.id]: {...existingEntity, ...transformEntity(entity)}
+        }
     };
 }
 
@@ -63,14 +63,14 @@ export const addRelationshipToEntity = (initialState, entityKey, entityId, relat
     let newState = insertOrUpdateEntity(initialState, relationshipObject);
     let entity = getEntity(newState, entityKey, entityId);
 
-    newState[pluralEntityKey] = [
-        ...newState[pluralEntityKey].filter(e => e !== entity),
-        addEntityIdToRelationshipArray(
+    newState[pluralEntityKey] = {
+        ...newState[pluralEntityKey],
+        [entityId]: addEntityIdToRelationshipArray(
             entity, 
             relationshipKey, 
             relationshipObject.id
         )
-    ];
+    };
 
     return newState;
 }
@@ -91,14 +91,14 @@ export const removeRelationshipFromEntity = (initialState, entityKey, entityId, 
     let newState = {...initialState};
     let entity = getEntity(newState, entityKey, entityId);
 
-    newState[pluralEntityKey] = [
-        ...newState[pluralEntityKey].filter(e => e !== entity),
-        removeEntityIdFromRelationshipArray(
+    newState[pluralEntityKey] = {
+        ...newState[pluralEntityKey],
+        [entityId]: removeEntityIdFromRelationshipArray(
             entity, 
             relationshipKey, 
             relationshipId
         )
-    ];
+    };
 
     return newState;
 }

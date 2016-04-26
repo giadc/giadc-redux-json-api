@@ -3,7 +3,7 @@ import pluralize from 'pluralize';
 export const getEntity = (state, key, id) => {
     let pluralKey = pluralize(key);
 
-    return state[pluralKey].filter(entity => entity.id === id)[0];
+    return state[pluralKey][id];
 }
 
 export const getEntities = (state, key, ids = null) => {
@@ -11,10 +11,6 @@ export const getEntities = (state, key, ids = null) => {
 
     if (ids === null) {
         return state[pluralKey];
-    }
-
-    if (ids.length === 0) {
-        return [];
     }
 
     let returnedEntities = [];

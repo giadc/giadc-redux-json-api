@@ -3,7 +3,7 @@
 A package for consuming and accessing JSON API data with Redux
 
 ## Hooking up the store
-```
+```javascript
 import { reducer as entities } from 'giadc-redux-json-api';
 import * as your-reducers from './reducers';
 
@@ -13,7 +13,7 @@ const store = createStore(
 ```
 
 ## Consuming JSON data
-```
+```javascript
 import { loadJsonApiEntityData } from 'giadc-redux-json-api';
 
 const yourFunction = (jsonApiData) => {
@@ -24,7 +24,7 @@ const yourFunction = (jsonApiData) => {
 ```
 
 ## Manipulating entities
-```
+```javascript
 import { addRelationshipToEntity, removeRelationshipFromEntity, updateEntity } from 'giadc-reduc-json-api';
 
 /** 
@@ -48,7 +48,7 @@ updateEntity(entityKey, entityId, dataObject);
 ```
 
 ## Fetching data
-```
+```javascript
 import { getEntity, getEntities } from 'giadc-redux-json-api';
 
 // Get single article
