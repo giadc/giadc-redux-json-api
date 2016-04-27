@@ -60,3 +60,14 @@ let articles = getEntities(state.entities, 'articles');
 // Get array of articles
 let articles = getEntities(state.entities, 'articles', [id1, id2, id3]);
 ```
+
+## Helpers
+```javascript
+import { getId, getIds } from 'giadc-redux-json-api';
+
+// Extract item ID from JSON API response
+getId(jsonResponse);
+
+// Extract collection ID's from JSON API response
+getIds(jsonResponse);
+```
