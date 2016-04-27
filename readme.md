@@ -1,6 +1,9 @@
 # giadc-redux-json-api
+[![npm](https://img.shields.io/npm/v/giadc-redux-json-api.svg?maxAge=2592000)]()
 
-A package for consuming and accessing JSON API data with Redux
+A package for consuming and accessing JSON API data with Redux.
+
+__This package is currently in development and not ready for usage in production. USE AT YOUR OWN RISK.__
 
 ## Hooking up the store
 ```javascript
@@ -23,22 +26,22 @@ dispatch(loadJsonApiEntityData(jsonApiData));
 ```javascript
 import { addRelationshipToEntity, removeRelationshipFromEntity, updateEntity } from 'giadc-reduc-json-api';
 
-/** 
- * dispatch(addRelationshipToEntity('article', 54321, 'readers', { 
- *     type: 'user', 
- *     id: 12345, 
+/**
+ * dispatch(addRelationshipToEntity('article', 54321, 'readers', {
+ *     type: 'user',
+ *     id: 12345,
  *     attributes: { name: "Bob Ross" }
- * })); 
- */ 
+ * }));
+ */
 addRelationshipToEntity(entityKey, entityId, relationshipKey, relationshipJsonApiObject);
-    
+
 // dispatch(removeRelationshipFromEntity('article', 54321, 'readers', 12345));
 removeRelationshipFromEntity(entityKey, entityId, relationshipKey, relationshipId);
 
 /**
  * dispatch(updateEntity('article', articleId, {
  *     isUserFavorite: true
- * })); 
+ * }));
  */
 updateEntity(entityKey, entityId, dataObject);
 ```
