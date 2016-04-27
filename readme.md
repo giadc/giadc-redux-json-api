@@ -16,11 +16,7 @@ const store = createStore(
 ```javascript
 import { loadJsonApiEntityData } from 'giadc-redux-json-api';
 
-const yourFunction = (jsonApiData) => {
-    return (dispatch) => {
-        dispatch(loadJsonApiEntityData(jsonApiData));
-    }
-}
+dispatch(loadJsonApiEntityData(jsonApiData));
 ```
 
 ## Manipulating entities

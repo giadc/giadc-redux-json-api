@@ -12,6 +12,10 @@ describe('getEntity', () => {
             "comments": ["5","12"]
         });
     });
+
+    it('should return `undefined` if the entity does not exist', () => {
+        expect(getEntity(state, 'article', 666)).to.equal(undefined);
+    });
 });
 
 describe('getEntities', () => {
@@ -48,7 +52,21 @@ describe('getEntities', () => {
                 "id": "44"
             }
         ]);
-    })
+    });
+
+    it('should return only entities that exist', () => {
+        expect(getEntities(state, 'comments', [5, 666])).to.eql([
+            {
+                "author": "2",
+                "body": "First!",
+                "id": "5"
+            }
+        ]);
+    });
+
+    it('should return an empty array if the entities do not exist', () => {
+        expect(getEntities(state, 'comments', [666, 777])).to.eql([]);
+    });
 });
 
 describe('getId', () => {

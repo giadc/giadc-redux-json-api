@@ -16,9 +16,11 @@ export const getEntities = (state, key, ids = null) => {
     let returnedEntities = [];
 
     ids.forEach((id) => {
-        returnedEntities.push(
-            getEntity(state, key, id)
-        );
+        let entity = getEntity(state, key, id);
+
+        if (entity) {
+            returnedEntities.push(entity);
+        }
     });
 
     return returnedEntities;
