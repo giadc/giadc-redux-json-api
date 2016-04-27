@@ -48,19 +48,25 @@ const transformRelationships = (relationships) => {
     let transformedRelationships = {};
 
     Object.keys(relationships).forEach((key) => {
-        let pluralKey = pluralize(key);
-        transformedRelationships[pluralKey] = relationships[pluralKey].data.map((relationship) => {
-            return relationship.id;
-        });
+        if (Array.isArray(relationships[key].data)) {
+            let pluralKey = pluralize(key);
+
+            transformedRelationships[pluralKey] = relationships[key].data.map((relationship) => {
+                return relationship.id;
+            });
+        } else {
+            transformedRelationships[key] = relationships[key].data.id;
+        }
     });
 
     return transformedRelationships;
 }
 
 export const addRelationshipToEntity = (initialState, entityKey, entityId, relationshipKey, relationshipObject) => {
+    console.log('@addRelationshipToEntity');
     let pluralEntityKey = pluralize(entityKey);
     let pluralRelationshipKey = pluralize(relationshipKey);
-    let newState = insertOrUpdateEntity(initialState, relationshipObject);
+    let newState = insertOrUpdateEntities(initialState, {data: relationshipObject});
     let entity = getEntity(newState, entityKey, entityId);
 
     newState[pluralEntityKey] = {
@@ -76,6 +82,7 @@ export const addRelationshipToEntity = (initialState, entityKey, entityId, relat
 }
 
 const addEntityIdToRelationshipArray = (entity, relationshipKey, relationshipId) => {
+    console.log('@addEntityIdToRelationshipArray', relationshipId);
     return {
         ...entity,
         [relationshipKey]: [
@@ -106,7 +113,7 @@ export const removeRelationshipFromEntity = (initialState, entityKey, entityId, 
 const removeEntityIdFromRelationshipArray = (entity, relationshipKey, relationshipId) => {
     return {
         ...entity,
-        [relationshipKey]: entity[relationshipKey].filter(id => id !== relationshipId)
+        [relationshipKey]: entity[relationshipKey].filter(id => { return id != relationshipId })
     };
 }
 
