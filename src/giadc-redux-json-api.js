@@ -1,4 +1,4 @@
-export { getEntity, getEntities } from './helpers';
+export { getEntity, getEntities, getId, getIds } from './helpers';
 export { reducer } from './reducer';
 export { 
     loadJsonApiEntityData,

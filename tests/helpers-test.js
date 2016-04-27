@@ -50,3 +50,17 @@ describe('getEntities', () => {
         ]);
     })
 });
+
+describe('getId', () => {
+    it('should return a single id', () => {
+        const jsonResponse = {"data":{"type":"article","id":"ba1582be-15d9-454e-ac8a-5ff9d2139d4d","attributes":{"title":"RootPage","slug":"root_page","path":"/root_page","published":true,"updatedAt":"2016-04-2616:16:06","isUserFavorite":true,"userCanEdit":true,"index":[{"level":"2","name":"heading-1","title":"Setup"},{"level":"2","name":"heading-2","title":"Config"},{"level":"2","name":"heading-3","title":"UsingthePackage"},{"level":"2","name":"heading-4","title":"ProcessingtheQueue"}]}}};
+        expect(getId(jsonResponse)).to.equal("ba1582be-15d9-454e-ac8a-5ff9d2139d4d");
+    });
+});
+
+describe('getIds', () => {
+    it('should return an array of ids', () => {
+        const jsonResponse = {"data":[{"type":"tag","id":"banana","attributes":{"name":"Banana"}},{"type":"tag","id":"hammock","attributes":{"name":"Hammock"}},{"type":"tag","id":"sop","attributes":{"name":"SOP"}}],"meta":{"pagination":{"total":6,"count":6,"per_page":15,"current_page":1,"total_pages":1,"links":[]}}};
+        expect(getIds(jsonResponse)).to.eql(["banana", "hammock", "sop"]);
+    });
+});

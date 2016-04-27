@@ -23,3 +23,11 @@ export const getEntities = (state, key, ids = null) => {
 
     return returnedEntities;
 }
+
+export const getId = (jsonData) => {
+    return jsonData.data.id;
+}
+
+export const getIds = (jsonData) => {
+    return jsonData.data.map((entity) => entity.id);
+}
