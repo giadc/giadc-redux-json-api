@@ -6,7 +6,7 @@
   "scripts": {
     "build": "babel --presets es2015,stage-0 -d lib/ src/",
     "watch": "babel --watch --presets es2015,stage-0 -d lib/ src/",
-    "test": "mocha tests/json-api-transformer-test.js --compilers js:babel-core/register --watch",
+    "test": "mocha tests --compilers js:babel-core/register --watch",
     "prepublish": "npm run build"
   },
   "repository": {

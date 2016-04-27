@@ -10,7 +10,7 @@ export const getEntities = (state, key, ids = null) => {
     let pluralKey = pluralize(key);
 
     if (ids === null) {
-        return state[pluralKey];
+        return Object.keys(state[pluralKey]).map((id) => state[pluralKey][id])
     }
 
     let returnedEntities = [];

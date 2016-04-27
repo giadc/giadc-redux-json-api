@@ -63,7 +63,6 @@ const transformRelationships = (relationships) => {
 }
 
 export const addRelationshipToEntity = (initialState, entityKey, entityId, relationshipKey, relationshipObject) => {
-    console.log('@addRelationshipToEntity');
     let pluralEntityKey = pluralize(entityKey);
     let pluralRelationshipKey = pluralize(relationshipKey);
     let newState = insertOrUpdateEntities(initialState, {data: relationshipObject});
@@ -82,7 +81,6 @@ export const addRelationshipToEntity = (initialState, entityKey, entityId, relat
 }
 
 const addEntityIdToRelationshipArray = (entity, relationshipKey, relationshipId) => {
-    console.log('@addEntityIdToRelationshipArray', relationshipId);
     return {
         ...entity,
         [relationshipKey]: [
