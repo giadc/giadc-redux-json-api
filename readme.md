@@ -1,7 +1,7 @@
 # giadc-redux-json-api
 [![npm](https://img.shields.io/npm/v/giadc-redux-json-api.svg?maxAge=2592000)]()
 
-A package for consuming and accessing JSON API data with Redux.
+A package for consuming and accessing [JSON API](http://jsonapi.org/) data with Redux.
 
 __This package is currently in development and not ready for usage in production. USE AT YOUR OWN RISK.__
 
