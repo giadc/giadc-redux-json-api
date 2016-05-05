@@ -13,8 +13,8 @@ describe('getEntity', () => {
         });
     });
 
-    it('should return `undefined` if the entity does not exist', () => {
-        expect(getEntity(state, 'article', 666)).to.equal(undefined);
+    it('should return `null` if the entity does not exist', () => {
+        expect(getEntity(state, 'article', 666)).to.equal(null);
     });
 });
 

@@ -3,6 +3,10 @@ import pluralize from 'pluralize';
 export const getEntity = (state, key, id) => {
     let pluralKey = pluralize(key);
 
+    if (!state[pluralKey] || !state[pluralKey][id]) {
+        return null;
+    }
+
     return state[pluralKey][id];
 }
 
