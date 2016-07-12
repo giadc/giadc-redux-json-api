@@ -66,6 +66,7 @@ describe('getEntities', () => {
 
     it('should return an empty array if the entities do not exist', () => {
         expect(getEntities(state, 'comments', [666, 777])).to.eql([]);
+        expect(getEntities(state, 'spicyboys')).to.eql([]);
     });
 });
 
