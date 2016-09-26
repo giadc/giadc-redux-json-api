@@ -15,14 +15,19 @@ export const insertOrUpdateEntities = (state, payload) => {
 
 const insertOrUpdateEntity = (state, entity) => {
     let pluralKey = pluralize(entity.type);
-    let entities = state[pluralKey] || {};
+    let store = state[pluralKey] || {};
+    let meta = store.meta || {};
+    let entities = store.byId || {};
     let existingEntity = entities[entity.id] || {};
     
     return {
         ...state,
         [pluralKey]: {
-            ...entities,
-            [entity.id]: {...existingEntity, ...transformEntity(entity)}
+            meta,
+            byId: {
+                ...entities,
+                [entity.id]: {...existingEntity, ...transformEntity(entity)}
+            }
         }
     };
 }
@@ -69,12 +74,15 @@ export const addRelationshipToEntity = (initialState, entityKey, entityId, relat
     let entity = getEntity(newState, entityKey, entityId);
 
     newState[pluralEntityKey] = {
-        ...newState[pluralEntityKey],
-        [entityId]: addEntityIdToRelationshipArray(
-            entity, 
-            relationshipKey, 
-            relationshipObject.id
-        )
+        meta: newState[pluralEntityKey].meta || {},
+        byId: {
+            ...newState[pluralEntityKey].byId,
+            [entityId]: addEntityIdToRelationshipArray(
+                entity, 
+                relationshipKey, 
+                relationshipObject.id
+            )
+        }
     };
 
     return newState;
@@ -97,12 +105,15 @@ export const removeRelationshipFromEntity = (initialState, entityKey, entityId, 
     let entity = getEntity(newState, entityKey, entityId);
 
     newState[pluralEntityKey] = {
-        ...newState[pluralEntityKey],
-        [entityId]: removeEntityIdFromRelationshipArray(
-            entity, 
-            relationshipKey, 
-            relationshipId
-        )
+        meta: newState[pluralEntityKey].meta || {},
+        byId: {
+            ...newState[pluralEntityKey].byId,
+            [entityId]: removeEntityIdFromRelationshipArray(
+                entity, 
+                relationshipKey, 
+                relationshipId
+            )
+        }
     };
 
     return newState;
@@ -123,4 +134,22 @@ export const updateEntity = (state, entityKey, entityId, data) => {
             attributes: data
         }
     })
+}
+
+export const setEntitiesMeta = (state, entityKey, metaKey, value) => {
+    let pluralKey = pluralize(entityKey);
+    let store = state[pluralKey] || {};
+    let meta = store.meta || {};
+    let byId = store.byId || {};
+
+    return {
+        ...state,
+        [pluralKey]: {
+            meta: {
+                ...meta,
+                [metaKey]: value,
+            },
+            byId,
+        }
+    };
 }

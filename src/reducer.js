@@ -1,6 +1,9 @@
 import { actionNames } from './constants';
 import {
-    insertOrUpdateEntities, addRelationshipToEntity, removeRelationshipFromEntity, updateEntity
+    insertOrUpdateEntities,
+    addRelationshipToEntity,
+    removeRelationshipFromEntity,
+    updateEntity,
 } from './json-api-transformer';
 
 export const reducer = (state = {}, action) => {

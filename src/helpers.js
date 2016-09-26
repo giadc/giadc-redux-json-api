@@ -3,11 +3,11 @@ import pluralize from 'pluralize';
 export const getEntity = (state, key, id) => {
     let pluralKey = pluralize(key);
 
-    if (!state[pluralKey] || !state[pluralKey][id]) {
+    if (!state[pluralKey] || !state[pluralKey].byId || !state[pluralKey].byId[id]) {
         return null;
     }
 
-    return state[pluralKey][id];
+    return state[pluralKey].byId[id];
 }
 
 export const getEntities = (state, key, ids = null) => {
@@ -16,11 +16,11 @@ export const getEntities = (state, key, ids = null) => {
     if (ids === null) {
         const data = state[pluralKey];
 
-        if (!data) {
+        if (!data || !data.byId) {
             return [];
         }
 
-        return Object.keys(data).map((id) => data[id]);
+        return Object.keys(data.byId).map((id) => data.byId[id]);
     }
 
     let returnedEntities = [];
@@ -42,4 +42,12 @@ export const getId = (jsonData) => {
 
 export const getIds = (jsonData) => {
     return jsonData.data.map((entity) => entity.id);
+}
+
+export const getEntitiesMeta = (state, entityKey, metaKey = null) => {
+    if (metaKey === null) {
+        return state[entityKey].meta;
+    }
+
+    return state[entityKey].meta[metaKey];
 }
