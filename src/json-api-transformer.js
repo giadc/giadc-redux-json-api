@@ -12,6 +12,19 @@ export const insertOrUpdateEntities = (state, payload) => {
         state
     );
 
+    if (payload.meta) {
+        const pluralKey = Array.isArray(payload.data)
+            ? pluralize(payload.data[0].type)
+            : pluralize(payload.data.type);
+
+        const meta = result[pluralKey].meta;
+
+        result[pluralKey].meta = {
+            ...meta,
+            ...payload.meta,
+        };
+    }
+
     if (Array.isArray(payload.data)) {
         const pluralKey = pluralize(payload.data[0].type);
         const meta = result[pluralKey].meta;
