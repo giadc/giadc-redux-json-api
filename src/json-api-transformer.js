@@ -1,5 +1,5 @@
 import pluralize from 'pluralize';
-import { getEntity } from './helpers';
+import { getEntity, getIds } from './helpers';
 
 export const insertOrUpdateEntities = (state, payload) => {
     let entities = Array.isArray(payload.data) ? payload.data : [payload.data];
@@ -7,10 +7,22 @@ export const insertOrUpdateEntities = (state, payload) => {
 
     entities = entities.concat(included);
 
-    return entities.reduce(
+    const result = entities.reduce(
         insertOrUpdateEntity,
         state
     );
+
+    if (Array.isArray(payload.data)) {
+        const pluralKey = pluralize(payload.data[0].type);
+        const meta = result[pluralKey].meta;
+
+        result[pluralKey].meta = {
+            ...meta,
+            mostRecentlyLoaded: getIds(payload),
+        };
+    }
+
+    return result;
 };
 
 const insertOrUpdateEntity = (state, entity) => {
