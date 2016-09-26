@@ -55,16 +55,18 @@ describe('addRelationshipToEntity', ()=> {
 describe('removeRelationshipFromEntity', () => {
     it('Removes a relationship', () => {
         let state = insertOrUpdateEntities({}, initialJsonResponse);
-        let result = removeRelationshipFromEntity(state, 'articles', 1, 'comments', 5);
+        let result = removeRelationshipFromEntity(state, 'articles', '1', 'comments', '5');
 
-        expect(result.articles.byId[1].comments).to.eql(['12']);
+        console.log(result.articles.byId);
+
+        expect(result.articles.byId['1'].comments).to.eql(['12']);
     })
 });
 
 describe('updateEntity', () => {
     it('Updates an entity', () => {
         let state = insertOrUpdateEntities({}, initialJsonResponse);
-        let result = updateEntity(state, 'articles', 1, {
+        let result = updateEntity(state, 'articles', '1', {
             title: 'New Title'
         });
 
@@ -76,8 +78,6 @@ describe('setEntitiesMeta', () => {
     it('should set a meta property for an entity', () => {
         let state = insertOrUpdateEntities({}, initialJsonResponse);
         let updatedState = setEntitiesMeta(state, 'articles', 'isLoading', true);
-
-        console.log(updatedState);
 
         expect(updatedState.articles.meta.isLoading).to.equal(true);
     });
