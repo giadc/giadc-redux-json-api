@@ -1,17 +1,17 @@
 import pluralize from 'pluralize';
 
 export const getEntity = (state, key, id) => {
-    let pluralKey = pluralize(key);
+    const pluralKey = pluralize(key);
 
     if (!state[pluralKey] || !state[pluralKey].byId || !state[pluralKey].byId[id]) {
         return null;
     }
 
     return state[pluralKey].byId[id];
-}
+};
 
 export const getEntities = (state, key, ids = null) => {
-    let pluralKey = pluralize(key);
+    const pluralKey = pluralize(key);
 
     if (ids === null) {
         const data = state[pluralKey];
@@ -20,13 +20,13 @@ export const getEntities = (state, key, ids = null) => {
             return [];
         }
 
-        return Object.keys(data.byId).map((id) => data.byId[id]);
+        return Object.keys(data.byId).map(id => data.byId[id]);
     }
 
-    let returnedEntities = [];
+    const returnedEntities = [];
 
     ids.forEach((id) => {
-        let entity = getEntity(state, key, id);
+        const entity = getEntity(state, key, id);
 
         if (entity) {
             returnedEntities.push(entity);
@@ -34,15 +34,11 @@ export const getEntities = (state, key, ids = null) => {
     });
 
     return returnedEntities;
-}
+};
 
-export const getId = (jsonData) => {
-    return jsonData.data.id;
-}
+export const getId = jsonData => jsonData.data.id;
 
-export const getIds = (jsonData) => {
-    return jsonData.data.map((entity) => entity.id);
-}
+export const getIds = jsonData => jsonData.data.map(entity => entity.id);
 
 export const getEntitiesMeta = (state, entityKey, metaKey = null) => {
     if (metaKey === null) {
@@ -50,4 +46,4 @@ export const getEntitiesMeta = (state, entityKey, metaKey = null) => {
     }
 
     return state[entityKey].meta[metaKey];
-}
+};

@@ -1,8 +1,8 @@
-export { getEntity, getEntities, getId, getIds } from './helpers';
+export { getEntity, getEntities, getEntityMeta, getId, getIds } from './helpers';
 export { reducer } from './reducer';
-export { 
+export {
     loadJsonApiEntityData,
     addRelationshipToEntity,
     removeRelationshipFromEntity,
-    updateEntity
+    updateEntity,
 } from './actions';

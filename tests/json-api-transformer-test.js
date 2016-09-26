@@ -1,7 +1,7 @@
 import { expect } from 'chai';
-import { 
-    insertOrUpdateEntities, 
-    addRelationshipToEntity, 
+import {
+    insertOrUpdateEntities,
+    addRelationshipToEntity,
     removeRelationshipFromEntity,
     updateEntity,
     setEntitiesMeta,
@@ -24,7 +24,7 @@ describe('insertOrUpdateEntities', () => {
     });
 });
 
-const commentJsonResponse = { 
+const commentJsonResponse = {
     "type": "comments",
     "id": "42",
     "attributes": {
