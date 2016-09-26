@@ -64,5 +64,16 @@ describe('reducer', () => {
                 title:'JSON API does not paint my bikeshed!'
             }
         })).to.eql(expectedState);
+    });
+
+    it('should handle UPDATE_ENTITIES_META', () => {
+        const expectedState = {"articles": {"meta": {"mostRecentlyLoaded": ["1"], "randomMetaKey": true},"byId": {"1": {"id": "1","title": "JSON API paints my bikeshed!","author": "9","comments": ["5", "12"]}}},"people": {"meta": {},"byId": {"9": {"id": "9","first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}},"comments": {"meta": {},"byId": {"5": {"id": "5","body": "First!","author": "2"},"12": {"id": "12","body": "I like XML better","author": "9"}}}};
+
+        expect(reducer(initialExpectedState, {
+            type: actionNames.UPDATE_ENTITIES_META,
+            entityKey: 'article',
+            metaKey: 'randomMetaKey',
+            value: true,
+        })).to.eql(expectedState);
     })
 });

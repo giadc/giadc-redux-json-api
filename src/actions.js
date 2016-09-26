@@ -27,3 +27,10 @@ export const updateEntity = (entityKey, entityId, data) => ({
     entityId,
     data,
 });
+
+export const updateEntitiesMeta = (entityKey, metaKey, value) => ({
+    type: actionNames.UPDATE_ENTITIES_META,
+    entityKey,
+    metaKey,
+    value,
+});

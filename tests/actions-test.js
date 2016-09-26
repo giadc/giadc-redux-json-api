@@ -70,4 +70,19 @@ describe('actions', () => {
         };
         expect(actions.updateEntity(entityKey, entityId, data)).to.eql(expectedAction);
     });
+
+    it('should create an action to update an entity groups meta data', () => {
+        const entityKey = 'articles';
+        const metaKey = 'isLoading';
+        const value = true;
+
+        const expectedAction = {
+            type: actionNames.UPDATE_ENTITIES_META,
+            entityKey,
+            metaKey,
+            value,
+        };
+
+        expect(actions.updateEntitiesMeta(entityKey, metaKey, value)).to.eql(expectedAction);
+    });
 });

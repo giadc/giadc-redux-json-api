@@ -153,7 +153,7 @@ export const updateEntity = (state, entityKey, entityId, data) => insertOrUpdate
     }
 );
 
-export const setEntitiesMeta = (state, entityKey, metaKey, value) => {
+export const updateEntitiesMeta = (state, entityKey, metaKey, value) => {
     const pluralKey = pluralize(entityKey);
     const store = state[pluralKey] || {};
     const meta = store.meta || {};
