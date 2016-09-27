@@ -1,7 +1,14 @@
 import { expect } from 'chai';
-import { getEntity, getEntities, getId, getIds, getEntitiesMeta } from '../lib/helpers';
+import {
+    getEntity,
+    getEntities,
+    getId,
+    getIds,
+    getEntitiesMeta,
+    getMostRecentlyLoaded,
+} from '../lib/helpers';
 
-const state = {"articles": {"meta": {"isLoading": true, "anotherMetaProperty": 666}, "byId": {"1": {"id": "1","title": "JSON API paints my bikeshed!","author": "9","comments": ["5", "12"]}}},"people": {"byId": {"9": {"id": "9","first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}},"comments": {"byId": {"5": {"id": "5","body": "First!","author": "2"},"12": {"id": "12","body": "I like XML better","author": "9"},"44": {"author": "9","body": "JSON API is love","id": "44"}}}};
+const state = {"articles": {"meta": {"isLoading": true, "anotherMetaProperty": 666, "mostRecentlyLoaded": [1]}, "byId": {"1": {"id": "1","title": "JSON API paints my bikeshed!","author": "9","comments": ["5", "12"]}}},"people": {"byId": {"9": {"id": "9","first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}},"comments": {"byId": {"5": {"id": "5","body": "First!","author": "2"},"12": {"id": "12","body": "I like XML better","author": "9"},"44": {"author": "9","body": "JSON API is love","id": "44"}}}};
 
 describe('getEntity', () => {
     it('should return an entity', () => {
@@ -89,10 +96,35 @@ describe('getEntitiesMeta', () => {
         expect(getEntitiesMeta(state, 'articles')).to.eql({
             isLoading: true,
             anotherMetaProperty: 666,
+            "mostRecentlyLoaded": [1],
         });
     });
 
     it('should return a specific meta property\'s value', () => {
         expect(getEntitiesMeta(state, 'articles', 'isLoading')).to.eql(true);
+    });
+
+    it('should return null if no meta data exists for an entity', () => {
+        expect(getEntitiesMeta(state, 'articles', 'invalidMetaKey')).to.eql(null);
+        expect(getEntitiesMeta(state, 'authors')).to.eql(null);
+    })
+});
+
+describe('mostRecentlyLoaded', () => {
+    console.log(state.articles);
+
+    it('should return the most recently loaded entities of a certain type', () => {
+        expect(getMostRecentlyLoaded(state, 'articles')).to.eql([
+            {
+                "id": "1",
+                "title": "JSON API paints my bikeshed!",
+                "author": "9",
+                "comments": ["5","12"]
+            }
+        ])
+    });
+
+    it('should return an empty array if no entities of a type have been loaded', () => {
+        expect(getMostRecentlyLoaded(state, 'bananas')).to.eql([]);
     })
 });
