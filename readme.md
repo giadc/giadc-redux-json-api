@@ -19,7 +19,7 @@ const store = createStore(
 ```javascript
 import { loadJsonApiEntityData } from 'giadc-redux-json-api';
 
-dispatch(loadJsonApiEntityData(jsonApiData));
+dispatch(loadJsonApiEntityData(jsonApiResponse));
 ```
 
 ## Manipulating entities
@@ -46,23 +46,39 @@ removeRelationshipFromEntity(entityKey, entityId, relationshipKey, relationshipI
 updateEntity(entityKey, entityId, dataObject);
 ```
 
-## Fetching data
+## Retrieving entities from the store
 ```javascript
-import { getEntity, getEntities } from 'giadc-redux-json-api';
+import { getEntity, getEntities, getMostRecentlyLoaded } from 'giadc-redux-json-api';
 
 // Get single article
-let article = getEntity(state.entities, 'article', articleId);
+const article = getEntity(state.entities, 'article', articleId);
 
 // Get all articles
-let articles = getEntities(state.entities, 'articles');
+const articles = getEntities(state.entities, 'articles');
 
 // Get array of articles
-let articles = getEntities(state.entities, 'articles', [id1, id2, id3]);
+const articles = getEntities(state.entities, 'articles', [id1, id2, id3]);
+
+// Get the most recently loaded articles
+const articles = getMostRecentlyLoaded(state.entities, 'articles');
+```
+
+### Metadata
+```javascript
+import { updateEntitiesMeta, getEntitiesMeta } from 'giadc-redux-json-api';
+// Set a metadata value for an Entity type
+dispatch(updateEntitiesMeta('articles', 'isLoading', true));
+
+// Get all metadata for an Entity type
+const metadata = getEntitiesMeta(state.entities, 'articles');
+
+// Get a specific metadata value for an Entity type
+const isLoading = getEntitiesMeta(state.entities, 'articles', 'isLoading');
 ```
 
 ## Helpers
 ```javascript
-import { getId, getIds } from 'giadc-redux-json-api';
+import { getId, getIds, getMostRecentlyLoaded } from 'giadc-redux-json-api';
 
 // Extract item ID from JSON API response
 getId(jsonResponse);
