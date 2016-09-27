@@ -85,7 +85,7 @@ dispatch(updateEntityMeta('articles', '123', 'isLoading', true));
 const metadata = getEntityMeta(state.entities, 'articles', '123');
 
 // Get a specific metadata value for a specific Entity
-const isLoading = getEntityMeta(state.entities, 'articles', '123', isLoading');
+const isLoading = getEntityMeta(state.entities, 'articles', '123', 'isLoading');
 ```
 
 ## Helpers
