@@ -27,7 +27,7 @@ export const insertOrUpdateEntities = (state, payload) => {
 
     if (Array.isArray(payload.data)) {
         const pluralKey = pluralize(payload.data[0].type);
-        const meta = result[pluralKey].meta;
+        const meta = result[pluralKey].meta || {};
 
         result[pluralKey].meta = {
             ...meta,
@@ -43,7 +43,7 @@ const insertOrUpdateEntity = (state, entity) => {
     const store = state[pluralKey] || {};
     const meta = store.meta || {};
     const entities = store.byId || {};
-    const existingEntity = entities[entity.id] || {};
+    const existingEntity = entities[entity.id] || { meta: {}, data: {} };
 
     return {
         ...state,
@@ -51,7 +51,13 @@ const insertOrUpdateEntity = (state, entity) => {
             meta,
             byId: {
                 ...entities,
-                [entity.id]: { ...existingEntity, ...transformEntity(entity) },
+                [entity.id]: {
+                    meta: existingEntity.meta || {},
+                    data: {
+                        ...existingEntity.data,
+                        ...transformEntity(entity),
+                    },
+                },
             },
         },
     };
@@ -99,13 +105,18 @@ export const addRelationshipToEntity = (initialState, entityKey, entityId, relat
         meta: newState[pluralEntityKey].meta || {},
         byId: {
             ...newState[pluralEntityKey].byId,
-            [entityId]: addEntityIdToRelationshipArray(
-                entity,
-                relationshipKey,
-                relationshipObject.id
-            ),
+            [entityId]: {
+                meta: newState[pluralEntityKey].byId[entityId].meta,
+                data: addEntityIdToRelationshipArray(
+                    entity,
+                    relationshipKey,
+                    relationshipObject.id
+                ),
+            },
         },
     };
+
+    console.log('there');
 
     return newState;
 };
@@ -127,11 +138,14 @@ export const removeRelationshipFromEntity = (initialState, entityKey, entityId, 
         meta: newState[pluralEntityKey].meta || {},
         byId: {
             ...newState[pluralEntityKey].byId,
-            [entityId]: removeEntityIdFromRelationshipArray(
-                entity,
-                relationshipKey,
-                relationshipId
-            ),
+            [entityId]: {
+                meta: newState[pluralEntityKey].byId[entityId].meta,
+                data: removeEntityIdFromRelationshipArray(
+                    entity,
+                    relationshipKey,
+                    relationshipId
+                ),
+            },
         },
     };
 
@@ -155,9 +169,22 @@ export const updateEntity = (state, entityKey, entityId, data) => insertOrUpdate
 
 export const updateEntitiesMeta = (state, entityKey, metaKey, value) => {
     const pluralKey = pluralize(entityKey);
-    const store = state[pluralKey] || {};
+    const store = state[pluralKey] || { meta: {}, byId: {} };
     const meta = store.meta || {};
     const byId = store.byId || {};
+
+    if (metaKey === null) {
+        return {
+            ...state,
+            [pluralKey]: {
+                meta: {
+                    ...value,
+                    mostRecentlyLoaded: meta.mostRecentlyLoaded || [],
+                },
+                byId,
+            },
+        };
+    }
 
     return {
         ...state,
@@ -170,3 +197,33 @@ export const updateEntitiesMeta = (state, entityKey, metaKey, value) => {
         },
     };
 };
+
+export const updateEntityMeta = (state, entityKey, entityId, metaKey, value) => {
+    const pluralKey = pluralize(entityKey);
+    const store = state[pluralKey] || { meta: {}, byId: {} };
+    const entity = store.byId[entityId] || { meta: {}, data: {} };
+
+    const meta = (metaKey === null)
+        ? value
+        : {
+            ...entity.meta,
+            [metaKey]: value,
+        };
+
+    const updatedEntity = {
+        meta,
+        data: entity.data,
+    };
+
+    return {
+        ...state,
+        [pluralKey]: {
+            meta: store.meta,
+            byId: {
+                ...store.byId,
+                [entityId]: updatedEntity,
+            },
+        },
+    };
+};
+

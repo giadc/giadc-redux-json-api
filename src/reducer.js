@@ -5,6 +5,7 @@ import {
     removeRelationshipFromEntity,
     updateEntity,
     updateEntitiesMeta,
+    updateEntityMeta,
 } from './json-api-transformer';
 
 export const reducer = (state = {}, action) => {
@@ -42,6 +43,15 @@ export const reducer = (state = {}, action) => {
             return updateEntitiesMeta(
                 state,
                 action.entityKey,
+                action.metaKey,
+                action.value,
+            );
+
+        case actionNames.UPDATE_ENTITY_META:
+            return updateEntityMeta(
+                state,
+                action.entityKey,
+                action.entityId,
                 action.metaKey,
                 action.value,
             );

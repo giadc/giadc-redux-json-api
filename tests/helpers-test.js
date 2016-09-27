@@ -5,10 +5,11 @@ import {
     getId,
     getIds,
     getEntitiesMeta,
+    getEntityMeta,
     getMostRecentlyLoaded,
 } from '../lib/helpers';
 
-const state = {"articles": {"meta": {"isLoading": true, "anotherMetaProperty": 666, "mostRecentlyLoaded": [1]}, "byId": {"1": {"id": "1","title": "JSON API paints my bikeshed!","author": "9","comments": ["5", "12"]}}},"people": {"byId": {"9": {"id": "9","first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}},"comments": {"byId": {"5": {"id": "5","body": "First!","author": "2"},"12": {"id": "12","body": "I like XML better","author": "9"},"44": {"author": "9","body": "JSON API is love","id": "44"}}}};
+const state = {"articles": {"meta": {"isLoading": true,"anotherMetaProperty": 666,"mostRecentlyLoaded": [1]},"byId": {"1": {"meta": {"isLoading": true},"data": {"id": "1","title": "JSON API paints my bikeshed!","author": "9","comments": ["5", "12"]}}}},"people": {"byId": {"9": {"meta": {},"data": {"id": "9","first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"byId": {"5": {"meta": {},"data": {"id": "5","body": "First!","author": "2"}},"12": {"meta": {},"data": {"id": "12","body": "I like XML better","author": "9"}},"44": {"meta": {},"data": {"author": "9","body": "JSON API is love","id": "44"}}}}};
 
 describe('getEntity', () => {
     it('should return an entity', () => {
@@ -92,7 +93,7 @@ describe('getIds', () => {
 });
 
 describe('getEntitiesMeta', () => {
-    it('should return all the meta data for an entity', () => {
+    it('should return all the meta data for an entity type', () => {
         expect(getEntitiesMeta(state, 'articles')).to.eql({
             isLoading: true,
             anotherMetaProperty: 666,
@@ -100,19 +101,34 @@ describe('getEntitiesMeta', () => {
         });
     });
 
-    it('should return a specific meta property\'s value', () => {
+    it('should return a specific meta property\'s value for an entity group', () => {
         expect(getEntitiesMeta(state, 'articles', 'isLoading')).to.eql(true);
     });
 
-    it('should return null if no meta data exists for an entity', () => {
+    it('should return null if no meta data exists for an entity group', () => {
         expect(getEntitiesMeta(state, 'articles', 'invalidMetaKey')).to.eql(null);
         expect(getEntitiesMeta(state, 'authors')).to.eql(null);
     })
 });
 
-describe('mostRecentlyLoaded', () => {
-    console.log(state.articles);
+describe('getEntityMeta', () => {
+    it('should return all the meta data for an entity type', () => {
+        expect(getEntityMeta(state, 'articles', '1')).to.eql({
+            isLoading: true,
+        });
+    });
 
+    it('should return a specific meta property\'s value for an entity group', () => {
+        expect(getEntityMeta(state, 'articles', '1', 'isLoading')).to.eql(true);
+    });
+
+    it('should return null if no meta data exists for an entity group', () => {
+        expect(getEntityMeta(state, 'articles', '1', 'invalidMetaKey')).to.eql(null);
+        expect(getEntityMeta(state, 'authors', '1')).to.eql(null);
+    })
+});
+
+describe('mostRecentlyLoaded', () => {
     it('should return the most recently loaded entities of a certain type', () => {
         expect(getMostRecentlyLoaded(state, 'articles')).to.eql([
             {

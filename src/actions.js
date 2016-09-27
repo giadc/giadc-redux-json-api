@@ -34,3 +34,11 @@ export const updateEntitiesMeta = (entityKey, metaKey, value) => ({
     metaKey,
     value,
 });
+
+export const updateEntityMeta = (entityKey, entityId, metaKey, value) => ({
+    type: actionNames.UPDATE_ENTITY_META,
+    entityKey,
+    entityId,
+    metaKey,
+    value,
+});

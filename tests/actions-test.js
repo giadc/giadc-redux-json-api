@@ -71,7 +71,7 @@ describe('actions', () => {
         expect(actions.updateEntity(entityKey, entityId, data)).to.eql(expectedAction);
     });
 
-    it('should create an action to update an entity groups meta data', () => {
+    it('should create an action to update metadata for an entity group', () => {
         const entityKey = 'articles';
         const metaKey = 'isLoading';
         const value = true;
@@ -85,4 +85,21 @@ describe('actions', () => {
 
         expect(actions.updateEntitiesMeta(entityKey, metaKey, value)).to.eql(expectedAction);
     });
+
+    it('should create an action to update metadata for an entity', () => {
+        const entityKey = 'articles',
+            entityId = '1',
+            metaKey = 'isLoading',
+            value = true;
+
+        const expectedAction = {
+            type: actionNames.UPDATE_ENTITY_META,
+            entityKey,
+            entityId,
+            metaKey,
+            value,
+        };
+
+        expect(actions.updateEntityMeta(entityKey, entityId, metaKey, value)).to.eql(expectedAction);
+    })
 });

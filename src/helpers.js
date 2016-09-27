@@ -3,11 +3,13 @@ import pluralize from 'pluralize';
 export const getEntity = (state, key, id) => {
     const pluralKey = pluralize(key);
 
-    if (!state[pluralKey] || !state[pluralKey].byId || !state[pluralKey].byId[id]) {
+    if (
+        !state[pluralKey] || !state[pluralKey].byId || !state[pluralKey].byId[id] || !state[pluralKey].byId[id].data
+    ) {
         return null;
     }
 
-    return state[pluralKey].byId[id];
+    return state[pluralKey].byId[id].data;
 };
 
 export const getEntities = (state, key, ids = null) => {
@@ -20,7 +22,7 @@ export const getEntities = (state, key, ids = null) => {
             return [];
         }
 
-        return Object.keys(data.byId).map(id => data.byId[id]);
+        return Object.keys(data.byId).map(id => getEntity(state, key, id));
     }
 
     const returnedEntities = [];
@@ -49,6 +51,24 @@ export const getEntitiesMeta = (state, entityKey, metaKey = null) => {
 
     return (state[entityKey] && state[entityKey].meta && state[entityKey].meta[metaKey])
         ? state[entityKey].meta[metaKey]
+        : null;
+};
+
+export const getEntityMeta = (state, entityKey, entityId, metaKey = null) => {
+    if (metaKey === null) {
+        return (
+            state[entityKey] && state[entityKey].byId && state[entityKey].byId[entityId]
+            && state[entityKey].byId[entityId].meta
+        )
+            ? state[entityKey].byId[entityId].meta
+            : null;
+    }
+
+    return (
+        state[entityKey] && state[entityKey].byId && state[entityKey].byId[entityId]
+        && state[entityKey].byId[entityId].meta && state[entityKey].byId[entityId].meta[metaKey]
+    )
+        ? state[entityKey].byId[entityId].meta[metaKey]
         : null;
 };
 
