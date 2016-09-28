@@ -36,6 +36,13 @@ describe('insertOrUpdateEntities', () => {
         const result = insertOrUpdateEntities({}, initialJsonResponse);
         expect(result.articles.meta.mostRecentlyLoaded).to.eql(['1']);
     });
+
+    it('ignores meta for unknown entity types', () => {
+        const emptyJsonResponseWithMetaData = { data: [ ], meta: { pagination: { total: 0, count: 0, per_page: 15, current_page: 1, total_pages: 0, links: [ ] } } };
+        const result = insertOrUpdateEntities({}, emptyJsonResponseWithMetaData);
+
+        expect(result).to.eql({});
+    })
 });
 
 const commentJsonResponse = {

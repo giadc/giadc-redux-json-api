@@ -1,6 +1,6 @@
 {
   "name": "giadc-redux-json-api",
-  "version": "0.3.0-alpha.1",
+  "version": "0.3.0-alpha.2",
   "description": "Reducer, actions, and helper functions for managing JSON API entities in Redux",
   "main": "./lib/giadc-redux-json-api.js",
   "scripts": {

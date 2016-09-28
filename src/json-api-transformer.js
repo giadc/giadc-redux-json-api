@@ -13,19 +13,22 @@ export const insertOrUpdateEntities = (state, payload) => {
     );
 
     if (payload.meta) {
-        const pluralKey = Array.isArray(payload.data)
-            ? pluralize(payload.data[0].type)
-            : pluralize(payload.data.type);
+        const key = Array.isArray(payload.data) && (payload.data.length > 0)
+            ? payload.data[0].type
+            : payload.data.type;
 
-        const meta = result[pluralKey].meta;
+        if (key !== undefined) {
+            const pluralKey = pluralize(key);
+            const meta = result[pluralKey].meta;
 
-        result[pluralKey].meta = {
-            ...meta,
-            ...payload.meta,
-        };
+            result[pluralKey].meta = {
+                ...meta,
+                ...payload.meta,
+            };
+        }
     }
 
-    if (Array.isArray(payload.data)) {
+    if (Array.isArray(payload.data) && (payload.data.length > 0)) {
         const pluralKey = pluralize(payload.data[0].type);
         const meta = result[pluralKey].meta || {};
 
@@ -115,8 +118,6 @@ export const addRelationshipToEntity = (initialState, entityKey, entityId, relat
             },
         },
     };
-
-    console.log('there');
 
     return newState;
 };
