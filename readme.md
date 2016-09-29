@@ -2,6 +2,9 @@
 [![npm](https://img.shields.io/npm/v/giadc-redux-json-api.svg?maxAge=2592000)]()
 
 A package for consuming and accessing [JSON API](http://jsonapi.org/) data with Redux.
+It will take a standard JSON API response, automatically flatten its structure, and
+update your redux store. For most apps, this greatly cuts down on the number of reducers
+that need to be written.
 
 __This package is currently in development and not ready for usage in production. USE AT YOUR OWN RISK.__
 
