@@ -27,11 +27,6 @@ describe('insertOrUpdateEntities', () => {
         expect(result.articles.byId[1].data.comments).to.eql(['5', '12']);
     });
 
-    it('updates the meta key', () => {
-        const result = insertOrUpdateEntities({}, initialJsonResponse);
-        expect(result.articles.meta).to.eql({"exampleMeta": true, "mostRecentlyLoaded": ['1']});
-    });
-
     it('updates the `mostRecentlyLoaded` meta key', () => {
         const result = insertOrUpdateEntities({}, initialJsonResponse);
         expect(result.articles.meta.mostRecentlyLoaded).to.eql(['1']);
