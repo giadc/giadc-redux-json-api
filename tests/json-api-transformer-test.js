@@ -26,18 +26,6 @@ describe('insertOrUpdateEntities', () => {
         expect(result.articles.byId[1].data.author).to.equal('9');
         expect(result.articles.byId[1].data.comments).to.eql(['5', '12']);
     });
-
-    it('updates the `mostRecentlyLoaded` meta key', () => {
-        const result = insertOrUpdateEntities({}, initialJsonResponse);
-        expect(result.articles.meta.mostRecentlyLoaded).to.eql(['1']);
-    });
-
-    it('ignores meta for unknown entity types', () => {
-        const emptyJsonResponseWithMetaData = { data: [ ], meta: { pagination: { total: 0, count: 0, per_page: 15, current_page: 1, total_pages: 0, links: [ ] } } };
-        const result = insertOrUpdateEntities({}, emptyJsonResponseWithMetaData);
-
-        expect(result).to.eql({});
-    })
 });
 
 const commentJsonResponse = {
@@ -102,7 +90,6 @@ describe('updateEntitiesMeta', () => {
 
         expect(updatedState.articles.meta).to.eql({
             newMetaProperty: 'newMetaValue',
-            mostRecentlyLoaded: [ '1' ]
         });
     });
 });

@@ -48,7 +48,7 @@ updateEntity(entityKey, entityId, dataObject);
 
 ## Retrieving entities from the store
 ```javascript
-import { getEntity, getEntities, getMostRecentlyLoaded } from 'giadc-redux-json-api';
+import { getEntity, getEntities } from 'giadc-redux-json-api';
 
 // Get single article
 const article = getEntity(state.entities, 'article', articleId);
@@ -58,11 +58,6 @@ const articles = getEntities(state.entities, 'articles');
 
 // Get array of articles
 const articles = getEntities(state.entities, 'articles', [id1, id2, id3]);
-
-// Get the most recently loaded articles. Note that this will only work for
-// entities that were directly loaded from an API call, not includes. Additionally,
-// this will not be updated when fetching a single entity
-const articles = getMostRecentlyLoaded(state.entities, 'articles');
 ```
 
 ### Metadata

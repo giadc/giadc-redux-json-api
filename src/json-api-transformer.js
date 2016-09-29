@@ -12,16 +12,6 @@ export const insertOrUpdateEntities = (state, payload) => {
         state
     );
 
-    if (Array.isArray(payload.data) && (payload.data.length > 0)) {
-        const pluralKey = pluralize(payload.data[0].type);
-        const meta = result[pluralKey].meta || {};
-
-        result[pluralKey].meta = {
-            ...meta,
-            mostRecentlyLoaded: getIds(payload),
-        };
-    }
-
     return result;
 };
 
@@ -162,10 +152,7 @@ export const updateEntitiesMeta = (state, entityKey, metaKey, value) => {
         return {
             ...state,
             [pluralKey]: {
-                meta: {
-                    ...value,
-                    mostRecentlyLoaded: meta.mostRecentlyLoaded || [],
-                },
+                meta: value,
                 byId,
             },
         };
