@@ -1,5 +1,6 @@
 export {
     getEntity,
+    getEntityMeta,
     getEntities,
     getEntitiesMeta,
     getMostRecentlyLoaded,
@@ -14,5 +15,6 @@ export {
     addRelationshipToEntity,
     removeRelationshipFromEntity,
     updateEntity,
+    updateEntityMeta,
     updateEntitiesMeta,
 } from './actions';
