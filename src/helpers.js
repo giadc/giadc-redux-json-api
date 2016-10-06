@@ -26,17 +26,8 @@ export const getEntities = (state, key, ids = null) => {
         return Object.keys(data.byId).map(id => getEntity(state, key, id));
     }
 
-    const returnedEntities = [];
-
-    ids.forEach((id) => {
-        const entity = getEntity(state, key, id);
-
-        if (entity) {
-            returnedEntities.push(entity);
-        }
-    });
-
-    return returnedEntities;
+    return ids.map(id => getEntity(state, key, id))
+        .filter(entity => !!entity);
 };
 
 export const getId = jsonData => jsonData.data.id;
