@@ -101,5 +101,5 @@ describe('actions', () => {
         };
 
         expect(actions.updateEntityMeta(entityKey, entityId, metaKey, value)).to.eql(expectedAction);
-    })
+    });
 });

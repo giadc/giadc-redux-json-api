@@ -1,4 +1,5 @@
 import pluralize from 'pluralize';
+import uuid from 'node-uuid';
 
 export const getEntity = (state, key, id) => {
     const pluralKey = pluralize(key);
@@ -72,8 +73,14 @@ export const getEntityMeta = (state, entityKey, entityId, metaKey = null) => {
         : null;
 };
 
-export const getMostRecentlyLoaded = (state, entityKey) => (
-    (state[entityKey] && state[entityKey].meta && state[entityKey].meta.mostRecentlyLoaded)
-        ? getEntities(state, entityKey, state[entityKey].meta.mostRecentlyLoaded)
-        : []
-    );
+export const generateEntity = (entityKey, attributes) => {
+    const id = attributes.id || uuid.v4();
+
+    return {
+        type: entityKey,
+        id,
+        attributes: Object.keys(attributes)
+            .filter(key => key !== 'id')
+            .reduce((carrier, key) => ({ ...carrier, [key]: attributes[key] }), {}),
+    };
+};

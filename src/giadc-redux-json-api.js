@@ -6,6 +6,7 @@ export {
     getMostRecentlyLoaded,
     getId,
     getIds,
+    generateEntity,
 } from './helpers';
 
 export { reducer } from './reducer';

@@ -7,9 +7,10 @@ import {
     getEntitiesMeta,
     getEntityMeta,
     getMostRecentlyLoaded,
-} from '../lib/helpers';
+    generateEntity,
+} from '../lib/giadc-redux-json-api';
 
-const state = {"articles": {"meta": {"isLoading": true,"anotherMetaProperty": 666,"mostRecentlyLoaded": [1]},"byId": {"1": {"meta": {"isLoading": true},"data": {"id": "1","title": "JSON API paints my bikeshed!","author": "9","comments": ["5", "12"]}}}},"people": {"byId": {"9": {"meta": {},"data": {"id": "9","first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"byId": {"5": {"meta": {},"data": {"id": "5","body": "First!","author": "2"}},"12": {"meta": {},"data": {"id": "12","body": "I like XML better","author": "9"}},"44": {"meta": {},"data": {"author": "9","body": "JSON API is love","id": "44"}}}}};
+const state = {"articles": {"meta": {"isLoading": true,"anotherMetaProperty": 666},"byId": {"1": {"meta": {"isLoading": true},"data": {"id": "1","title": "JSON API paints my bikeshed!","author": "9","comments": ["5", "12"]}}}},"people": {"byId": {"9": {"meta": {},"data": {"id": "9","first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"byId": {"5": {"meta": {},"data": {"id": "5","body": "First!","author": "2"}},"12": {"meta": {},"data": {"id": "12","body": "I like XML better","author": "9"}},"44": {"meta": {},"data": {"author": "9","body": "JSON API is love","id": "44"}}}}};
 
 describe('getEntity', () => {
     it('should return an entity', () => {
@@ -96,8 +97,7 @@ describe('getEntitiesMeta', () => {
     it('should return all the meta data for an entity type', () => {
         expect(getEntitiesMeta(state, 'articles')).to.eql({
             isLoading: true,
-            anotherMetaProperty: 666,
-            "mostRecentlyLoaded": [1],
+            anotherMetaProperty: 666
         });
     });
 
@@ -128,19 +128,32 @@ describe('getEntityMeta', () => {
     })
 });
 
-describe('mostRecentlyLoaded', () => {
-    it('should return the most recently loaded entities of a certain type', () => {
-        expect(getMostRecentlyLoaded(state, 'articles')).to.eql([
-            {
-                "id": "1",
-                "title": "JSON API paints my bikeshed!",
-                "author": "9",
-                "comments": ["5","12"]
-            }
-        ])
+describe('generateEntity', () => {
+    it('should generate a valid entity object', () => {
+        const entityKey = 'article';
+        const attributes = {
+            id: '123',
+            title: 'New Entity',
+        };
+
+        const result = generateEntity(entityKey, attributes);
+
+        expect(result).to.contain.have.all.keys('id', 'type', 'attributes');
+        expect(result.type).to.equal(entityKey);
+        expect(result.attributes).to.eql({ title: 'New Entity' });
     });
 
-    it('should return an empty array if no entities of a type have been loaded', () => {
-        expect(getMostRecentlyLoaded(state, 'bananas')).to.eql([]);
-    })
+    it('should generate an id if one wasn\'t provided', () => {
+        const entityKey = 'article';
+        const attributes = {
+            title: 'New Entity',
+        };
+
+        const result = generateEntity(entityKey, attributes);
+
+        expect(result).to.contain.have.all.keys('id', 'type', 'attributes');
+        expect(result.type).to.equal(entityKey);
+        expect(result.id.length).to.equal(36);
+        expect(result.attributes).to.eql(attributes);
+    });
 });
