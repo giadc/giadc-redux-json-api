@@ -37,7 +37,7 @@ describe('actions', () => {
             type: actionNames.ADD_RELATIONSHIP_TO_ENTITY + '_ARTICLE_READERS',
             entityKey,
             entityId,
-            relationshipKey, 
+            relationshipKey,    
             relationshipObject
         };
         expect(actions.addRelationshipToEntity(entityKey, entityId, relationshipKey, relationshipObject)).to.eql(expectedAction);
@@ -52,7 +52,7 @@ describe('actions', () => {
             type: actionNames.REMOVE_RELATIONSHIP_FROM_ENTITY + '_ARTICLE_READERS',
             entityKey,
             entityId,
-            relationshipKey, 
+            relationshipKey,    
             relationshipId
         };
         expect(actions.removeRelationshipFromEntity(entityKey, entityId, relationshipKey, relationshipId)).to.eql(expectedAction);
@@ -68,7 +68,7 @@ describe('actions', () => {
             type: actionNames.UPDATE_ENTITY + '_ARTICLE',
             entityKey,
             entityId,
-            data 
+            data    
         };
         expect(actions.updateEntity(entityKey, entityId, data)).to.eql(expectedAction);
     });

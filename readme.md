@@ -101,7 +101,7 @@ getIds(jsonResponse);
 ```
 
 ## Generate an entity locally
-Sometimes you may need to generate and store an entity that didn't actually come from a JSON API. 
+Sometimes you may need to generate and store an entity that didn't actually come from a JSON API.    
 __json-redux-json-api__ provides a simple `generateEntity` helper function for that.
 
 ```javascript

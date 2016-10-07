@@ -84,7 +84,7 @@ describe('reducer', () => {
             entityKey: 'article',
             metaKey: null,
             value: { newMetaProperty: 'newMetaValue' },
-        })).to.eql(expectedState);      
+        })).to.eql(expectedState);    
     });
 
     it('should handle UPDATE_ENTITY_META and replace a single metadata property', () => {
