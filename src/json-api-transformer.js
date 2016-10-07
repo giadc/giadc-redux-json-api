@@ -7,12 +7,10 @@ export const insertOrUpdateEntities = (state, payload) => {
 
     entities = entities.concat(included);
 
-    const result = entities.reduce(
+    return entities.reduce(
         insertOrUpdateEntity,
         state
     );
-
-    return result;
 };
 
 const insertOrUpdateEntity = (state, entity) => {
@@ -57,21 +55,18 @@ const transformEntity = (entity) => {
     return transformedEntity;
 };
 
-const transformRelationships = (relationships) => {
-    const transformedRelationships = {};
-
-    Object.keys(relationships).forEach((key) => {
-        if (Array.isArray(relationships[key].data)) {
-            const pluralKey = pluralize(key);
-
-            transformedRelationships[pluralKey] = relationships[key].data.map(relationship => relationship.id);
-        } else {
-            transformedRelationships[key] = relationships[key].data.id;
-        }
-    });
-
-    return transformedRelationships;
-};
+const transformRelationships = relationships =>
+    Object.keys(relationships).reduce((transformedRelationships, key) => (
+        (Array.isArray(relationships[key].data))
+            ? {
+                ...transformedRelationships,
+                [pluralize(key)]: relationships[key].data.map(relationship => relationship.id),
+            }
+            : {
+                ...transformedRelationships,
+                [key]: relationships[key].data.id,
+            }
+    ), {});
 
 export const addRelationshipToEntity = (initialState, entityKey, entityId, relationshipKey, relationshipObject) => {
     const pluralEntityKey = pluralize(entityKey);
@@ -106,25 +101,25 @@ const addEntityIdToRelationshipArray = (entity, relationshipKey, relationshipId)
 
 export const removeRelationshipFromEntity = (initialState, entityKey, entityId, relationshipKey, relationshipId) => {
     const pluralEntityKey = pluralize(entityKey);
-    const newState = { ...initialState };
-    const entity = getEntity(newState, entityKey, entityId);
+    const entity = getEntity(initialState, entityKey, entityId);
 
-    newState[pluralEntityKey] = {
-        meta: newState[pluralEntityKey].meta || {},
-        byId: {
-            ...newState[pluralEntityKey].byId,
-            [entityId]: {
-                meta: newState[pluralEntityKey].byId[entityId].meta,
-                data: removeEntityIdFromRelationshipArray(
-                    entity,
-                    relationshipKey,
-                    relationshipId
-                ),
+    return {
+        ...initialState,
+        [pluralEntityKey]: {
+            meta: initialState[pluralEntityKey].meta || {},
+            byId: {
+                ...initialState[pluralEntityKey].byId,
+                [entityId]: {
+                    meta: initialState[pluralEntityKey].byId[entityId].meta,
+                    data: removeEntityIdFromRelationshipArray(
+                        entity,
+                        relationshipKey,
+                        relationshipId
+                    ),
+                },
             },
         },
     };
-
-    return newState;
 };
 
 const removeEntityIdFromRelationshipArray = (entity, relationshipKey, relationshipId) => ({
@@ -148,23 +143,15 @@ export const updateEntitiesMeta = (state, entityKey, metaKey, value) => {
     const meta = store.meta || {};
     const byId = store.byId || {};
 
-    if (metaKey === null) {
-        return {
-            ...state,
-            [pluralKey]: {
-                meta: value,
-                byId,
-            },
-        };
-    }
-
     return {
         ...state,
         [pluralKey]: {
-            meta: {
-                ...meta,
-                [metaKey]: value,
-            },
+            meta: (metaKey === null)
+                ? value
+                : {
+                    ...meta,
+                    [metaKey]: value,
+                },
             byId,
         },
     };
