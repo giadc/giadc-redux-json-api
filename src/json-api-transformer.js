@@ -1,5 +1,5 @@
 import pluralize from 'pluralize';
-import { getEntity, getIds } from './helpers';
+import { getEntity } from './helpers';
 
 export const insertOrUpdateEntities = (state, payload) => {
     let entities = Array.isArray(payload.data) ? payload.data : [payload.data];

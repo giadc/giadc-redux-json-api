@@ -1,4 +1,6 @@
 import { expect } from 'chai';
+import pluralize from 'pluralize';
+
 import * as actions from '../lib/actions';
 import { actionNames } from '../lib/constants';
 
@@ -32,7 +34,7 @@ describe('actions', () => {
             }
         };
         const expectedAction = {
-            type: actionNames.ADD_RELATIONSHIP_TO_ENTITY,
+            type: actionNames.ADD_RELATIONSHIP_TO_ENTITY + '_ARTICLE_READERS',
             entityKey,
             entityId,
             relationshipKey, 
@@ -47,7 +49,7 @@ describe('actions', () => {
         const relationshipKey = 'reader';
         const relationshipId = '54321';
         const expectedAction = {
-            type: actionNames.REMOVE_RELATIONSHIP_FROM_ENTITY,
+            type: actionNames.REMOVE_RELATIONSHIP_FROM_ENTITY + '_ARTICLE_READERS',
             entityKey,
             entityId,
             relationshipKey, 
@@ -63,7 +65,7 @@ describe('actions', () => {
             title: 'New Test Title'
         };
         const expectedAction = {
-            type: actionNames.UPDATE_ENTITY,
+            type: actionNames.UPDATE_ENTITY + '_ARTICLE',
             entityKey,
             entityId,
             data 
@@ -77,7 +79,7 @@ describe('actions', () => {
         const value = true;
 
         const expectedAction = {
-            type: actionNames.UPDATE_ENTITIES_META,
+            type: actionNames.UPDATE_ENTITIES_META + '_ARTICLES',
             entityKey,
             metaKey,
             value,
@@ -87,13 +89,13 @@ describe('actions', () => {
     });
 
     it('should create an action to update metadata for an entity', () => {
-        const entityKey = 'articles',
+        const entityKey = 'article',
             entityId = '1',
             metaKey = 'isLoading',
             value = true;
 
         const expectedAction = {
-            type: actionNames.UPDATE_ENTITY_META,
+            type: actionNames.UPDATE_ENTITY_META + '_ARTICLE',
             entityKey,
             entityId,
             metaKey,

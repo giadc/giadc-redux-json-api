@@ -8,55 +8,57 @@ import {
     updateEntityMeta,
 } from './json-api-transformer';
 
-export const reducer = (state = {}, action) => {
-    switch (action.type) {
-        case actionNames.LOAD_JSON_API_ENTITY_DATA:
-            return insertOrUpdateEntities(state, action.data);
+const reducerMap = {
+    [actionNames.LOAD_JSON_API_ENTITY_DATA]: (state, action) => insertOrUpdateEntities(state, action.data),
 
-        case actionNames.ADD_RELATIONSHIP_TO_ENTITY:
-            return addRelationshipToEntity(
-                state,
-                action.entityKey,
-                action.entityId,
-                action.relationshipKey,
-                action.relationshipObject
-            );
+    [actionNames.ADD_RELATIONSHIP_TO_ENTITY]: (state, action) => addRelationshipToEntity(
+        state,
+        action.entityKey,
+        action.entityId,
+        action.relationshipKey,
+        action.relationshipObject
+    ),
 
-        case actionNames.REMOVE_RELATIONSHIP_FROM_ENTITY:
-            return removeRelationshipFromEntity(
-                state,
-                action.entityKey,
-                action.entityId,
-                action.relationshipKey,
-                action.relationshipId
-            );
+    [actionNames.REMOVE_RELATIONSHIP_FROM_ENTITY]: (state, action) => removeRelationshipFromEntity(
+        state,
+        action.entityKey,
+        action.entityId,
+        action.relationshipKey,
+        action.relationshipId
+    ),
 
-        case actionNames.UPDATE_ENTITY:
-            return updateEntity(
-                state,
-                action.entityKey,
-                action.entityId,
-                action.data
-            );
+    [actionNames.UPDATE_ENTITIES_META]: (state, action) => updateEntitiesMeta(
+        state,
+        action.entityKey,
+        action.metaKey,
+        action.value,
+    ),
 
-        case actionNames.UPDATE_ENTITIES_META:
-            return updateEntitiesMeta(
-                state,
-                action.entityKey,
-                action.metaKey,
-                action.value,
-            );
+    [actionNames.UPDATE_ENTITY_META]: (state, action) => updateEntityMeta(
+        state,
+        action.entityKey,
+        action.entityId,
+        action.metaKey,
+        action.value,
+    ),
 
-        case actionNames.UPDATE_ENTITY_META:
-            return updateEntityMeta(
-                state,
-                action.entityKey,
-                action.entityId,
-                action.metaKey,
-                action.value,
-            );
+    [actionNames.UPDATE_ENTITY]: (state, action) => updateEntity(
+        state,
+        action.entityKey,
+        action.entityId,
+        action.data
+    ),
 
-        default:
-            return state;
+    default: state => state,
+};
+
+export default (state = {}, action) => {
+    const actionKey = Object.keys(reducerMap)
+        .find(key => action.type && action.type.match(new RegExp(`^${key}(_[_A-Z]+)?$`)));
+
+    if (actionKey) {
+        return reducerMap[actionKey](state, action);
     }
+
+    return reducerMap.default(state, action);
 };

@@ -32,7 +32,7 @@ describe('reducer', () => {
         const expectedState = {"articles": {"meta": {},"byId": {"1": {"meta": {},"data": {"id": "1","title": "JSON API paints my bikeshed!","author": "9","comments": ["5", "12", "44"]}}}},"people": {"meta": {},"byId": {"9": {"meta": {},"data": {"id": "9","first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"meta": {},"byId": {"5": {"meta": {},"data": {"id": "5","body": "First!","author": "2"}},"12": {"meta": {},"data": {"id": "12","body": "I like XML better","author": "9"}},"44": {"meta": {},"data": {"id": "44","body": "This is a terrible comment","author": "9"}}}}};
 
         expect(reducer(initialExpectedState, {
-            type: actionNames.ADD_RELATIONSHIP_TO_ENTITY,
+            type: actionNames.ADD_RELATIONSHIP_TO_ENTITY + '_ARTICLE_COMMENTS',
             entityKey: 'article',
             entityId: '1',
             relationshipKey: 'comments',
@@ -44,7 +44,7 @@ describe('reducer', () => {
         const expectedState = {"articles": {"meta": {},"byId": {"1": {"meta": {},"data": {"id": "1","title": "JSON API paints my bikeshed!","author": "9","comments": ["12"]}}}},"people": {"meta": {},"byId": {"9": {"meta": {},"data": {"id": "9","first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"meta": {},"byId": {"5": {"meta": {},"data": {"id": "5","body": "First!","author": "2"}},"12": {"meta": {},"data": {"id": "12","body": "I like XML better","author": "9"}}}}};
 
         expect(reducer(initialExpectedState, {
-            type: actionNames.REMOVE_RELATIONSHIP_FROM_ENTITY,
+            type: actionNames.REMOVE_RELATIONSHIP_FROM_ENTITY + '_ARTICLE_COMMENTS',
             entityKey: 'article',
             entityId: '1',
             relationshipKey: 'comments',
@@ -56,7 +56,7 @@ describe('reducer', () => {
         const expectedState = {"articles": {"meta": {},"byId": {"1": {"meta": {},"data": {"id": "1","title": "JSON API does not paint my bikeshed!","author": "9","comments": ["5", "12"]}}}},"people": {"meta": {},"byId": {"9": {"meta": {},"data": {"id": "9","first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"meta": {},"byId": {"5": {"meta": {},"data": {"id": "5","body": "First!","author": "2"}},"12": {"meta": {},"data": {"id": "12","body": "I like XML better","author": "9"}}}}};
 
         expect(reducer(initialExpectedState, {
-            type: actionNames.UPDATE_ENTITY,
+            type: actionNames.UPDATE_ENTITY + '_ARTICLE',
             entityKey: 'article',
             entityId: '1',
             data: {
@@ -69,7 +69,7 @@ describe('reducer', () => {
         const expectedState = {"articles": {"meta": {"randomMetaKey": true},"byId": {"1": {"meta": {},"data": {"id": "1","title": "JSON API paints my bikeshed!","author": "9","comments": ["5", "12"]}}}},"people": {"meta": {},"byId": {"9": {"meta": {},"data": {"id": "9","first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"meta": {},"byId": {"5": {"meta": {},"data": {"id": "5","body": "First!","author": "2"}},"12": {"meta": {},"data": {"id": "12","body": "I like XML better","author": "9"}}}}};
 
         expect(reducer(initialExpectedState, {
-            type: actionNames.UPDATE_ENTITIES_META,
+            type: actionNames.UPDATE_ENTITIES_META + '_ARTICLES',
             entityKey: 'article',
             metaKey: 'randomMetaKey',
             value: true,
@@ -80,7 +80,7 @@ describe('reducer', () => {
         const expectedState = {"articles": {"meta": {"newMetaProperty": "newMetaValue"},"byId": {"1": {"meta": {},"data": {"id": "1","title": "JSON API paints my bikeshed!","author": "9","comments": ["5", "12"]}}}},"people": {"meta": {},"byId": {"9": {"meta": {},"data": {"id": "9","first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"meta": {},"byId": {"5": {"meta": {},"data": {"id": "5","body": "First!","author": "2"}},"12": {"meta": {},"data": {"id": "12","body": "I like XML better","author": "9"}}}}};
 
         expect(reducer(initialExpectedState, {
-            type: actionNames.UPDATE_ENTITIES_META,
+            type: actionNames.UPDATE_ENTITIES_META + '_ARTICLES',
             entityKey: 'article',
             metaKey: null,
             value: { newMetaProperty: 'newMetaValue' },
@@ -91,7 +91,7 @@ describe('reducer', () => {
         const expectedState = {"articles": {"meta": {},"byId": {"1": {"meta": {"isLoading": true},"data": {"id": "1","title": "JSON API paints my bikeshed!","author": "9","comments": ["5", "12"]}}}},"people": {"meta": {},"byId": {"9": {"meta": {},"data": {"id": "9","first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"meta": {},"byId": {"5": {"meta": {},"data": {"id": "5","body": "First!","author": "2"}},"12": {"meta": {},"data": {"id": "12","body": "I like XML better","author": "9"}}}}};
 
         expect(reducer(initialExpectedState, {
-            type: actionNames.UPDATE_ENTITY_META,
+            type: actionNames.UPDATE_ENTITY_META + '_ARTICLE',
             entityKey: 'article',
             entityId: '1',
             metaKey: 'isLoading',
@@ -103,7 +103,7 @@ describe('reducer', () => {
         const expectedState = {"articles": {"meta": {},"byId": {"1": {"meta": {"randomMetaKey": true},"data": {"id": "1","title": "JSON API paints my bikeshed!","author": "9","comments": ["5", "12"]}}}},"people": {"meta": {},"byId": {"9": {"meta": {},"data": {"id": "9","first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"meta": {},"byId": {"5": {"meta": {},"data": {"id": "5","body": "First!","author": "2"}},"12": {"meta": {},"data": {"id": "12","body": "I like XML better","author": "9"}}}}};
 
         expect(reducer(initialExpectedState, {
-            type: actionNames.UPDATE_ENTITY_META,
+            type: actionNames.UPDATE_ENTITY_META + '_ARTICLE',
             entityKey: 'article',
             entityId: '1',
             metaKey: null,
