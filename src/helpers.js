@@ -10,7 +10,7 @@ export const getEntity = (state, key, id) => {
         return null;
     }
 
-    return state[pluralKey].byId[id].data;
+    return { ...state[pluralKey].byId[id].data, id };
 };
 
 export const getEntities = (state, key, ids = null) => {

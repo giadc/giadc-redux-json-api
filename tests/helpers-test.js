@@ -14,7 +14,7 @@ const state = {"articles": {"meta": {"isLoading": true,"anotherMetaProperty": 66
 
 describe('getEntity', () => {
     it('should return an entity', () => {
-        expect(getEntity(state, 'article', 1)).to.eql({
+        expect(getEntity(state, 'article', "1")).to.eql({
             "id": "1",
             "title": "JSON API paints my bikeshed!",
             "author": "9",
@@ -49,7 +49,7 @@ describe('getEntities', () => {
     });
 
     it('should return a subset of entities', () => {
-        expect(getEntities(state, 'comments', [5, 44])).to.eql([
+        expect(getEntities(state, 'comments', ["5", "44"])).to.eql([
             {
                 "author": "2",
                 "body": "First!",
@@ -64,7 +64,7 @@ describe('getEntities', () => {
     });
 
     it('should return only entities that exist', () => {
-        expect(getEntities(state, 'comments', [5, 666])).to.eql([
+        expect(getEntities(state, 'comments', ["5", "666"])).to.eql([
             {
                 "author": "2",
                 "body": "First!",

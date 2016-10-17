@@ -39,20 +39,14 @@ const insertOrUpdateEntity = (state, entity) => {
 };
 
 const transformEntity = (entity) => {
-    let transformedEntity = { id: entity.id };
+    const transformedEntity = entity.attributes ? { ...entity.attributes } : {};
 
-    if (entity.attributes) {
-        transformedEntity = { ...transformedEntity, ...entity.attributes };
-    }
-
-    if (entity.relationships) {
-        transformedEntity = {
+    return entity.relationships
+        ? {
             ...transformedEntity,
             ...transformRelationships(entity.relationships),
-        };
-    }
-
-    return transformedEntity;
+        }
+        : transformedEntity;
 };
 
 const transformRelationships = relationships =>
@@ -71,7 +65,9 @@ const transformRelationships = relationships =>
 export const addRelationshipToEntity = (initialState, entityKey, entityId, relationshipKey, relationshipObject) => {
     const pluralEntityKey = pluralize(entityKey);
     const newState = insertOrUpdateEntities(initialState, { data: relationshipObject });
-    const entity = getEntity(newState, entityKey, entityId);
+    const { id, ...entity } = getEntity(newState, entityKey, entityId);
+
+    console.log(id, entity);
 
     newState[pluralEntityKey] = {
         meta: newState[pluralEntityKey].meta || {},
@@ -101,7 +97,7 @@ const addEntityIdToRelationshipArray = (entity, relationshipKey, relationshipId)
 
 export const removeRelationshipFromEntity = (initialState, entityKey, entityId, relationshipKey, relationshipId) => {
     const pluralEntityKey = pluralize(entityKey);
-    const entity = getEntity(initialState, entityKey, entityId);
+    const { id, ...entity } = getEntity(initialState, entityKey, entityId);
 
     return {
         ...initialState,
