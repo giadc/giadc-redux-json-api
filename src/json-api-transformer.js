@@ -67,8 +67,6 @@ export const addRelationshipToEntity = (initialState, entityKey, entityId, relat
     const newState = insertOrUpdateEntities(initialState, { data: relationshipObject });
     const { id, ...entity } = getEntity(newState, entityKey, entityId);
 
-    console.log(id, entity);
-
     newState[pluralEntityKey] = {
         meta: newState[pluralEntityKey].meta || {},
         byId: {
