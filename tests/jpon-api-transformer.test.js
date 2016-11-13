@@ -26,6 +26,28 @@ describe('insertOrUpdateEntities', () => {
         expect(result.articles.byId[1].data.author).to.equal('9');
         expect(result.articles.byId[1].data.comments).to.eql(['5', '12']);
     });
+
+    it('throws an error if an entity doesn\'t have an id', () => {
+        const entityWithNoId = {
+            data: {
+                type: 'TestEntity',
+            },
+        };
+
+        const functionCallWithInvalidEntity = () => insertOrUpdateEntities({}, entityWithNoId);
+        expect(functionCallWithInvalidEntity).to.throw(Error, /must have an `id`/);
+    });
+
+    it('throws an error if an entity doesn\'t have a type', () => {
+        const entityWithNoId = {
+            data: {
+                id: '123',
+            },
+        };
+
+        const functionCallWithInvalidEntity = () => insertOrUpdateEntities({}, entityWithNoId);
+        expect(functionCallWithInvalidEntity).to.throw(Error, /must have a `type`/);
+    });
 });
 
 const commentJsonResponse = {

@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import pluralize from 'pluralize';
 
 import * as actions from '../lib/actions';
-import { actionNames } from '../lib/constants';
+import actionNames from '../lib/constants';
 
 describe('actions', () => {
     it('should create an action to load json api data', () => {

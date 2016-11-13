@@ -1,4 +1,4 @@
-import { actionNames } from './constants';
+import actionNames from './constants';
 import {
     insertOrUpdateEntities,
     addRelationshipToEntity,
@@ -52,6 +52,13 @@ const reducerMap = {
     default: state => state,
 };
 
+/**
+ * The giadc-redux-json-api reducer
+ *
+ * @param  {Object} state
+ * @param  {Object} action
+ * @return {Object}
+ */
 export default (state = {}, action) => {
     const actionKey = Object.keys(reducerMap)
         .find(key => action.type && action.type.match(new RegExp(`^${key}(_[_A-Z]+)?$`)));
