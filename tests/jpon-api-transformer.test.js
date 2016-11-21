@@ -1,7 +1,9 @@
 import chai from 'chai';
 import {
-    insertOrUpdateEntities,
     addRelationshipToEntity,
+    clearEntityType,
+    insertOrUpdateEntities,
+    removeEntity,
     removeRelationshipFromEntity,
     updateEntity,
     updateEntitiesMeta,
@@ -68,8 +70,8 @@ const commentJsonResponse = {
 
 describe('addRelationshipToEntity', ()=> {
     it('Adds new relationships', () => {
-        let state = insertOrUpdateEntities({}, initialJsonResponse);
-        let result = addRelationshipToEntity(state, 'articles', 1, 'comments', commentJsonResponse);
+        const state = insertOrUpdateEntities({}, initialJsonResponse);
+        const result = addRelationshipToEntity(state, 'articles', 1, 'comments', commentJsonResponse);
 
         expect(result.comments.byId).to.have.all.keys('5', '12', '42');
 
@@ -80,8 +82,8 @@ describe('addRelationshipToEntity', ()=> {
 
 describe('removeRelationshipFromEntity', () => {
     it('removes a relationship', () => {
-        let state = insertOrUpdateEntities({}, initialJsonResponse);
-        let result = removeRelationshipFromEntity(state, 'articles', '1', 'comments', '5');
+        const state = insertOrUpdateEntities({}, initialJsonResponse);
+        const result = removeRelationshipFromEntity(state, 'articles', '1', 'comments', '5');
 
         expect(result.articles.byId['1'].data.comments).to.eql(['12']);
     })
@@ -89,8 +91,8 @@ describe('removeRelationshipFromEntity', () => {
 
 describe('updateEntity', () => {
     it('updates an entity', () => {
-        let state = insertOrUpdateEntities({}, initialJsonResponse);
-        let result = updateEntity(state, 'articles', '1', {
+        const state = insertOrUpdateEntities({}, initialJsonResponse);
+        const result = updateEntity(state, 'articles', '1', {
             title: 'New Title'
         });
 
@@ -100,18 +102,37 @@ describe('updateEntity', () => {
 
 describe('updateEntitiesMeta', () => {
     it('should set a meta property for an entity', () => {
-        let state = insertOrUpdateEntities({}, initialJsonResponse);
-        let updatedState = updateEntitiesMeta(state, 'articles', 'isLoading', true);
+        const state = insertOrUpdateEntities({}, initialJsonResponse);
+        const updatedState = updateEntitiesMeta(state, 'articles', 'isLoading', true);
 
         expect(updatedState.articles.meta.isLoading).to.equal(true);
     });
 
     it('should completely replace the metadata for an entity', () => {
-        let state = insertOrUpdateEntities({}, initialJsonResponse);
-        let updatedState = updateEntitiesMeta(state, 'articles', null, { newMetaProperty: 'newMetaValue' });
+        const state = insertOrUpdateEntities({}, initialJsonResponse);
+        const updatedState = updateEntitiesMeta(state, 'articles', null, { newMetaProperty: 'newMetaValue' });
 
         expect(updatedState.articles.meta).to.eql({
             newMetaProperty: 'newMetaValue',
+        });
+    });
+});
+
+describe('removeEntity', () => {
+    it('should delete an entity', () => {
+        const state = insertOrUpdateEntities({}, initialJsonResponse);
+        const updatedState = removeEntity(state, 'articles', '1');
+        expect(updatedState.articles.byId).to.eql({});
+    });
+});
+
+describe('clearEntityType', () => {
+    it('should reset an entity type', () => {
+        const state = insertOrUpdateEntities({}, initialJsonResponse);
+        const updatedState = clearEntityType(state, 'articles');
+        expect(updatedState.articles).to.eql({
+            byId: {},
+            meta: {},
         });
     });
 });

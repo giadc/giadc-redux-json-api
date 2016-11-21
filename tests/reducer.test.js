@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { reducer } from '../lib/giadc-redux-json-api';
-import actionNames from '../lib/constants';
+import actionNames from '../lib/action-names';
 
 const initialJsonApiResponse = {"links":{"self":"http://example.com/articles","next":"http://example.com/articles?page[offset]=2","last":"http://example.com/articles?page[offset]=10"},"data":[{"type":"articles","id":"1","attributes":{"title":"JSON API paints my bikeshed!"},"relationships":{"author":{"links":{"self":"http://example.com/articles/1/relationships/author","related":"http://example.com/articles/1/author"},"data":{"type":"people","id":"9"}},"comments":{"links":{"self":"http://example.com/articles/1/relationships/comments","related":"http://example.com/articles/1/comments"},"data":[{"type":"comments","id":"5"},{"type":"comments","id":"12"}]}},"links":{"self":"http://example.com/articles/1"}}],"included":[{"type":"people","id":"9","attributes":{"first-name":"Dan","last-name":"Gebhardt","twitter":"dgeb"},"links":{"self":"http://example.com/people/9"}},{"type":"comments","id":"5","attributes":{"body":"First!"},"relationships":{"author":{"data":{"type":"people","id":"2"}}},"links":{"self":"http://example.com/comments/5"}},{"type":"comments","id":"12","attributes":{"body":"I like XML better"},"relationships":{"author":{"data":{"type":"people","id":"9"}}},"links":{"self":"http://example.com/comments/12"}}]};
 const initialExpectedState = {"articles": {"meta": {},"byId": {"1": {"meta": {},"data": {"title": "JSON API paints my bikeshed!","author": "9","comments": ["5", "12"]}}}},"people": {"meta": {},"byId": {"9": {"meta": {},"data": {"first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"meta": {},"byId": {"5": {"meta": {},"data": {"body": "First!","author": "2"}},"12": {"meta": {},"data": {"body": "I like XML better","author": "9"}}}}};
@@ -110,6 +110,25 @@ describe('reducer', () => {
             value: {
                 randomMetaKey: true,
             },
+        })).to.eql(expectedState);
+    });
+
+    it('should handle REMOVE_ENTITY', () => {
+        const expectedState = {"articles": {"meta": {},"byId": {}},"people": {"meta": {},"byId": {"9": {"meta": {},"data": {"first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"meta": {},"byId": {"5": {"meta": {},"data": {"body": "First!","author": "2"}},"12": {"meta": {},"data": {"body": "I like XML better","author": "9"}}}}};
+
+        expect(reducer(initialExpectedState, {
+            type: actionNames.REMOVE_ENTITY + '_ARTICLE',
+            entityKey: 'article',
+            entityId: '1',
+        })).to.eql(expectedState);
+    });
+
+    it('should handle CLEAR_ENTITY_TYPE', () => {
+        const expectedState = {"articles":{"meta":{},"byId":{}},"people":{"meta":{},"byId":{"9":{"meta":{},"data":{"first-name":"Dan","last-name":"Gebhardt","twitter":"dgeb"}}}},"comments":{"meta":{},"byId":{"5":{"meta":{},"data":{"body":"First!","author":"2"}},"12":{"meta":{},"data":{"body":"I like XML better","author":"9"}}}}};
+
+        expect(reducer(initialExpectedState, {
+            type: actionNames.CLEAR_ENTITY_TYPE + '_ARTICLES',
+            entityKey: 'articles',
         })).to.eql(expectedState);
     });
 });

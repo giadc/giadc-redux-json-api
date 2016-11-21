@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import pluralize from 'pluralize';
 
 import * as actions from '../lib/actions';
-import actionNames from '../lib/constants';
+import actionNames from '../lib/action-names';
 
 describe('actions', () => {
     it('should create an action to load json api data', () => {
@@ -103,5 +103,29 @@ describe('actions', () => {
         };
 
         expect(actions.updateEntityMeta(entityKey, entityId, metaKey, value)).to.eql(expectedAction);
+    });
+
+    it('should create an action to delete an entity', () => {
+        const entityKey = 'article',
+            entityId = '1';
+
+        const expectedAction = {
+            type: actionNames.REMOVE_ENTITY + '_ARTICLE',
+            entityKey,
+            entityId,
+        };
+
+        expect(actions.removeEntity(entityKey, entityId)).to.eql(expectedAction);
+    });
+
+    it('should create an action to delete an entity type', () => {
+        const entityKey = 'articles';
+
+        const expectedAction = {
+            type: actionNames.CLEAR_ENTITY_TYPE + '_ARTICLES',
+            entityKey,
+        };
+
+        expect(actions.clearEntityType(entityKey)).to.eql(expectedAction);
     });
 });

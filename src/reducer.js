@@ -1,7 +1,9 @@
-import actionNames from './constants';
+import actionNames from './action-names';
 import {
-    insertOrUpdateEntities,
     addRelationshipToEntity,
+    clearEntityType,
+    insertOrUpdateEntities,
+    removeEntity,
     removeRelationshipFromEntity,
     updateEntity,
     updateEntitiesMeta,
@@ -47,6 +49,18 @@ const reducerMap = {
         action.entityKey,
         action.entityId,
         action.data
+    ),
+
+    [actionNames.REMOVE_ENTITY]: (state, action) => removeEntity(
+        state,
+        action.entityKey,
+        action.entityId,
+    ),
+
+    [actionNames.CLEAR_ENTITY_TYPE]: (state, action) => clearEntityType(
+        state,
+        action.entityKey,
+        action.entityId,
     ),
 
     default: state => state,

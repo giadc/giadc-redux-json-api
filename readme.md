@@ -67,9 +67,20 @@ const articles = getEntities(state.entities, 'articles');
 const articles = getEntities(state.entities, 'articles', [id1, id2, id3]);
 ```
 
+## Removing entities from the store
+```javascript
+import { removeEntity, clearEntityType } from 'giadc-redux-json-api';
+
+// Remove a single entity
+dispatch(removeEntity(state.entities, 'articles', '1'));
+
+// Remove all entities from an entity type
+dispatch(clearEntityType(state.entities, 'articles'));
+```
+
 ## Metadata
 ```javascript
-import { updateEntitiesMeta, getEntitiesMeta } from 'giadc-redux-json-api';
+import { updateEntitiesMeta, updateEntityMeta, getEntitiesMeta, getEntityMeta } from 'giadc-redux-json-api';
 
 // Set a metadata value for an Entity type
 dispatch(updateEntitiesMeta('articles', 'isLoading', true));

@@ -290,3 +290,47 @@ export const updateEntityMeta = (state, entityKey, entityId, metaKey, value) => 
     };
 };
 
+/**
+ * Remove a single Entity
+ *
+ * @param  {Object} state
+ * @param  {String} entityKey
+ * @param  {String} entityId
+ * @return {Object}
+ */
+export const removeEntity = (state, entityKey, entityId) => {
+    const pluralKey = pluralize(entityKey);
+    const store     = state[pluralKey] || {};
+    const entities  = store.byId || {};
+
+    return {
+        ...state,
+        [pluralKey]: {
+            meta: store.meta,
+            byId: Object.keys(entities).filter(id => id !== entityId)
+                .reduce((accumulator, id) => ({
+                    ...accumulator,
+                    [id]: entities[id],
+                }), {}),
+        },
+    };
+};
+
+/**
+ * Clear all of the Entities out of an Entity type
+ *
+ * @param  {Object} state
+ * @param  {String} entityKey
+ * @return {Object}
+ */
+export const clearEntityType = (state, entityKey) => {
+    const pluralKey = pluralize(entityKey);
+
+    return {
+        ...state,
+        [pluralKey]: {
+            byId: {},
+            meta: {},
+        },
+    };
+};

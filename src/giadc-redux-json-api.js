@@ -12,9 +12,11 @@ export {
 export { default as reducer } from './reducer';
 
 export {
-    loadJsonApiEntityData,
     addRelationshipToEntity,
+    clearEntityType,
+    loadJsonApiEntityData,
     removeRelationshipFromEntity,
+    removeEntity,
     updateEntity,
     updateEntityMeta,
     updateEntitiesMeta,

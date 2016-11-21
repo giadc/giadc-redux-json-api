@@ -1,5 +1,5 @@
 import pluralize from 'pluralize';
-import actionNames from './constants';
+import actionNames from './action-names';
 
 /**
  * Load a JSON API response into the state
@@ -91,4 +91,28 @@ export const updateEntityMeta = (entityKey, entityId, metaKey, value) => ({
     entityId,
     metaKey,
     value,
+});
+
+/**
+ * Remove a single Entity
+ *
+ * @param  {String} entityKey
+ * @param  {String} entityId
+ * @return {Object}
+ */
+export const removeEntity = (entityKey, entityId) => ({
+    type: `${actionNames.REMOVE_ENTITY}_${pluralize(entityKey, 1).toUpperCase()}`,
+    entityKey,
+    entityId,
+});
+
+/**
+ * Clear all the Entities from an Entity type
+ *
+ * @param  {String} entityKey
+ * @return {Object}
+ */
+export const clearEntityType = entityKey => ({
+    type: `${actionNames.CLEAR_ENTITY_TYPE}_${pluralize(entityKey).toUpperCase()}`,
+    entityKey,
 });
