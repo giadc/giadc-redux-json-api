@@ -1,5 +1,5 @@
 import pluralize from 'pluralize';
-import uuid from 'node-uuid';
+import uuid from 'uuid';
 
 /**
  * Grab an Entity from the state
