@@ -29,6 +29,22 @@ describe('insertOrUpdateEntities', () => {
         expect(result.articles.byId[1].data.comments).to.eql(['5', '12']);
     });
 
+    it('create a brand new type of entity not via json api data', () => {
+        const result = insertOrUpdateEntities({}, {
+            type: 'movie',
+            id: '123',
+            attributes: {
+                title: 'Puppy goes swimming',
+                rating: 5,
+            },
+        });
+
+        expect(result).to.be.an('object');
+        expect(result.movies).to.be.an('object');
+        expect(result.movies.byId['123'].data.title).to.equal('Puppy goes swimming');
+        expect(result.movies.byId['123'].data.rating).to.equal(5);
+    });
+
     it('throws an error if an entity doesn\'t have an id', () => {
         const entityWithNoId = {
             data: {

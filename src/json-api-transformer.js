@@ -10,7 +10,8 @@ import { getEntity } from './helpers';
  * @return {Object}
  */
 export const insertOrUpdateEntities = (state, payload) => {
-    let entities = Array.isArray(payload.data) ? payload.data : [payload.data];
+    const data = payload.data || [payload];
+    let entities = Array.isArray(data) ? data : [data];
     const included = payload.included || [];
 
     entities = entities.concat(included);
