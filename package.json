@@ -17,8 +17,8 @@
     "author": "Ryan Marganti <rmarganti@gannett.com>",
     "license": "MIT",
     "dependencies": {
-        "node-uuid": "^1.4.7",
-        "pluralize": "^1.2.1"
+        "pluralize": "^1.2.1",
+        "uuid": "^3.0.0"
     },
     "devDependencies": {
         "babel-cli": "^6.7.7",
@@ -33,4 +33,3 @@
         "mocha": "^2.4.5"
     }
 }
-
