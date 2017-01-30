@@ -10,8 +10,6 @@ that need to be written.
 Note: This package does not make/handle network requests. Its purpose is to consume
 JSON API data that has already been retrieved from a server.
 
-__This package is currently in development and not ready for usage in production. USE AT YOUR OWN RISK.__
-
 ## Hooking up the store
 ```javascript
 import { reducer as entities } from 'giadc-redux-json-api';
@@ -72,10 +70,10 @@ const articles = getEntities(state.entities, 'articles', [id1, id2, id3]);
 import { removeEntity, clearEntityType } from 'giadc-redux-json-api';
 
 // Remove a single entity
-dispatch(removeEntity(state.entities, 'articles', '1'));
+dispatch(removeEntity('articles', '1'));
 
 // Remove all entities from an entity type
-dispatch(clearEntityType(state.entities, 'articles'));
+dispatch(clearEntityType('articles'));
 ```
 
 ## Metadata
@@ -114,7 +112,7 @@ getIds(jsonResponse);
 
 ## Generate an entity locally
 Sometimes you may need to generate and store an entity that didn't actually come from a JSON API.    
-__json-redux-json-api__ provides a simple `generateEntity` helper function for that.
+__giadc-redux-json-api__ provides a simple `generateEntity` helper function for that.
 
 ```javascript
 import { generateEntity, loadJsonApiEntityData, addRelationshipToEntity } from 'giadc-redux-json-api';
