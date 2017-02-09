@@ -112,16 +112,24 @@ const transformRelationships = relationships =>
  * Insert an Entity into the state and
  * add it as a relationship to another Entity
  *
- * @param  {Object} initialState
- * @param  {String} entityKey
- * @param  {String} entityId
- * @param  {String} relationshipKey
- * @param  {Object} relationshipObject
+ * @param  {Object}         initialState
+ * @param  {String}         entityKey
+ * @param  {String}         entityId
+ * @param  {String}         relationshipKey
+ * @param  {Object|String}  relationshipObject  Can be either a valid JSON API object or a string ID
  * @return {Object}
  */
 export const addRelationshipToEntity = (initialState, entityKey, entityId, relationshipKey, relationshipObject) => {
     const pluralEntityKey = pluralize(entityKey);
-    const newState = insertOrUpdateEntities(initialState, { data: relationshipObject });
+
+    const wrappedRelationshipObject = (typeof relationshipObject === 'object' && !relationshipObject.data)
+        ? { data: relationshipObject }
+        : relationshipObject;
+
+    const newState = (typeof relationshipObject === 'string')
+        ? { ...initialState }
+        : insertOrUpdateEntities(initialState, wrappedRelationshipObject);
+
     const { id, ...entity } = getEntity(newState, entityKey, entityId); // eslint-disable-line no-unused-vars
 
     newState[pluralEntityKey] = {
@@ -133,7 +141,9 @@ export const addRelationshipToEntity = (initialState, entityKey, entityId, relat
                 data: addEntityIdToRelationshipArray(
                     entity,
                     relationshipKey,
-                    relationshipObject.id
+                    (typeof relationshipObject === 'string')
+                        ? relationshipObject
+                        : wrappedRelationshipObject.data.id
                 ),
             },
         },

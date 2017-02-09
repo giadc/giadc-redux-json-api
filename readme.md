@@ -39,15 +39,22 @@ import { addRelationshipToEntity, removeRelationshipFromEntity, updateEntity } f
 updateEntity(entityKey, entityId, dataObject);
 
 /**
- * dispatch(addRelationshipToEntity('article', 54321, 'readers', {
+ * dispatch(addRelationshipToEntity('article', '54321', 'readers', {
  *     type: 'user',
- *     id: 12345,
+ *     id: '12345',
  *     attributes: { name: "Bob Ross" }
  * }));
  */
 addRelationshipToEntity(entityKey, entityId, relationshipKey, relationshipJsonApiObject);
 
-// dispatch(removeRelationshipFromEntity('article', 54321, 'readers', 12345));
+/**
+ * You can also add relationships by ID.
+ * dispatch(addRelationshipToEntity('article', '54321', 'readers', '12345'));
+ */
+addRelationshipToEntity(entityKey, entityId, relationshipKey, relationshipJsonApiObject);
+
+
+// dispatch(removeRelationshipFromEntity('article', '54321', 'readers', '12345'));
 removeRelationshipFromEntity(entityKey, entityId, relationshipKey, relationshipId);
 ```
 

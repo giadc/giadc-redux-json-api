@@ -85,11 +85,29 @@ const commentJsonResponse = {
 };
 
 describe('addRelationshipToEntity', ()=> {
-    it('Adds new relationships', () => {
+    it('Adds new relationships when given a data wrapped object', () => {
+        const state = insertOrUpdateEntities({}, initialJsonResponse);
+        const result = addRelationshipToEntity(state, 'articles', 1, 'comments', { data: commentJsonResponse });
+
+        expect(result.comments.byId).to.have.all.keys('5', '12', '42');
+
+        expect(result.articles.byId[1].data.comments).to.be.an('array');
+        expect(result.articles.byId[1].data.comments).to.eql(['5', '12', '42']);
+    })
+
+    it('Adds new relationships when given a non-data wrapped object', () => {
         const state = insertOrUpdateEntities({}, initialJsonResponse);
         const result = addRelationshipToEntity(state, 'articles', 1, 'comments', commentJsonResponse);
 
         expect(result.comments.byId).to.have.all.keys('5', '12', '42');
+
+        expect(result.articles.byId[1].data.comments).to.be.an('array');
+        expect(result.articles.byId[1].data.comments).to.eql(['5', '12', '42']);
+    })
+
+    it('Adds new relationships when given an id', () => {
+        const state = insertOrUpdateEntities({}, initialJsonResponse);
+        const result = addRelationshipToEntity(state, 'articles', 1, 'comments', '42');
 
         expect(result.articles.byId[1].data.comments).to.be.an('array');
         expect(result.articles.byId[1].data.comments).to.eql(['5', '12', '42']);
