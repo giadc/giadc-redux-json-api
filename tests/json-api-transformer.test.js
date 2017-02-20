@@ -13,7 +13,7 @@ chai.config.includeStack = true;
 
 const expect = chai.expect;
 
-const initialJsonResponse = {"links": {"self": "http://example.com/articles","next": "http://example.com/articles?page[offset]=2","last": "http://example.com/articles?page[offset]=10"},"data": [{"type": "articles","id": "1","attributes": {"title": "JSON API paints my bikeshed!"},"relationships": {"author": {"links": {"self": "http://example.com/articles/1/relationships/author","related": "http://example.com/articles/1/author"},"data": {"type": "people","id": "9"}},"comments": {"links": {"self": "http://example.com/articles/1/relationships/comments","related": "http://example.com/articles/1/comments"},"data": [{"type": "comments","id": "5"}, {"type": "comments","id": "12"}]}},"links": {"self": "http://example.com/articles/1"}}],"included": [{"type": "people","id": "9","attributes": {"first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"},"links": {"self": "http://example.com/people/9"}}, {"type": "comments","id": "5","attributes": {"body": "First!"},"relationships": {"author": {"data": {"type": "people","id": "2"}}},"links": {"self": "http://example.com/comments/5"}}, {"type": "comments","id": "12","attributes": {"body": "I like XML better"},"relationships": {"author": {"data": {"type": "people","id": "9"}}},"links": {"self": "http://example.com/comments/12"}}],"meta": {"exampleMeta": true}};
+const initialJsonResponse = {'links': {'self': 'http://example.com/articles','next': 'http://example.com/articles?page[offset]=2','last': 'http://example.com/articles?page[offset]=10'},'data': [{'type': 'articles','id': '1','attributes': {'title': 'JSON API paints my bikeshed!'},'relationships': {'author': {'links': {'self': 'http://example.com/articles/1/relationships/author','related': 'http://example.com/articles/1/author'},'data': {'type': 'people','id': '9'}},'comments': {'links': {'self': 'http://example.com/articles/1/relationships/comments','related': 'http://example.com/articles/1/comments'},'data': [{'type': 'comments','id': '5'}, {'type': 'comments','id': '12'}]}},'links': {'self': 'http://example.com/articles/1'}}],'included': [{'type': 'people','id': '9','attributes': {'first-name': 'Dan','last-name': 'Gebhardt','twitter': 'dgeb'},'links': {'self': 'http://example.com/people/9'}}, {'type': 'comments','id': '5','attributes': {'body': 'First!'},'relationships': {'author': {'data': {'type': 'people','id': '2'}}},'links': {'self': 'http://example.com/comments/5'}}, {'type': 'comments','id': '12','attributes': {'body': 'I like XML better'},'relationships': {'author': {'data': {'type': 'people','id': '9'}}},'links': {'self': 'http://example.com/comments/12'}}],'meta': {'exampleMeta': true}};
 
 describe('insertOrUpdateEntities', () => {
     it('parses json data', () => {
@@ -69,19 +69,32 @@ describe('insertOrUpdateEntities', () => {
 });
 
 const commentJsonResponse = {
-    "type": "comments",
-    "id": "42",
-    "attributes": {
-      "body": "Banana!"
+    type: 'comments',
+    id: '42',
+    attributes: { body: 'Banana!' },
+    relationships: {
+      author: { data: { type: 'people', id: '2' } }
     },
-    "relationships": {
-      "author": {
-        "data": { "type": "people", "id": "2" }
-      }
-    },
-    "links": {
-      "self": "http://example.com/comments/5"
-    }
+    links: { self: 'http://example.com/comments/42' }
+};
+
+const multipleCommentJsonResponse = {
+    data: [
+        {
+            type: 'comments',
+            id: '42',
+            attributes: { body: 'Banana!' },
+            relationships: { author: { data: { type: 'people', id: '2' } } },
+            links: { self: 'http://example.com/comments/42' }
+        },
+        {
+            type: 'comments',
+            id: '44',
+            attributes: { body: '!ananaB' },
+            relationships: { author: { data: { type: 'people', id: '2' } } },
+            links: { self: 'http://example.com/comments/44' }
+        },
+    ],
 };
 
 describe('addRelationshipToEntity', ()=> {
@@ -93,7 +106,7 @@ describe('addRelationshipToEntity', ()=> {
 
         expect(result.articles.byId[1].data.comments).to.be.an('array');
         expect(result.articles.byId[1].data.comments).to.eql(['5', '12', '42']);
-    })
+    });
 
     it('Adds new relationships when given a non-data wrapped object', () => {
         const state = insertOrUpdateEntities({}, initialJsonResponse);
@@ -103,7 +116,16 @@ describe('addRelationshipToEntity', ()=> {
 
         expect(result.articles.byId[1].data.comments).to.be.an('array');
         expect(result.articles.byId[1].data.comments).to.eql(['5', '12', '42']);
-    })
+    });
+
+    it('Adds new relationships when given an array of objects', () => {
+        const state = insertOrUpdateEntities({}, initialJsonResponse);
+        const result = addRelationshipToEntity(state, 'articles', 1, 'comments', multipleCommentJsonResponse);
+
+        expect(result.comments.byId).to.have.all.keys('5', '12', '42', '44');
+        expect(result.articles.byId[1].data.comments).to.be.an('array');
+        expect(result.articles.byId[1].data.comments).to.eql(['5', '12', '42', '44']);
+    });
 
     it('Adds new relationships when given an id', () => {
         const state = insertOrUpdateEntities({}, initialJsonResponse);
@@ -111,7 +133,15 @@ describe('addRelationshipToEntity', ()=> {
 
         expect(result.articles.byId[1].data.comments).to.be.an('array');
         expect(result.articles.byId[1].data.comments).to.eql(['5', '12', '42']);
-    })
+    });
+
+    it('Adds new relationships when given an array of ids', () => {
+        const state = insertOrUpdateEntities({}, initialJsonResponse);
+        const result = addRelationshipToEntity(state, 'articles', 1, 'comments', ['42', '44']);
+
+        expect(result.articles.byId[1].data.comments).to.be.an('array');
+        expect(result.articles.byId[1].data.comments).to.eql(['5', '12', '42', '44']);
+    });
 });
 
 describe('removeRelationshipFromEntity', () => {
@@ -120,7 +150,7 @@ describe('removeRelationshipFromEntity', () => {
         const result = removeRelationshipFromEntity(state, 'articles', '1', 'comments', '5');
 
         expect(result.articles.byId['1'].data.comments).to.eql(['12']);
-    })
+    });
 });
 
 describe('updateEntity', () => {

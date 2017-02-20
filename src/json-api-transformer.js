@@ -126,6 +126,12 @@ export const addRelationshipToEntity = (initialState, entityKey, entityId, relat
         ? { data: relationshipObject }
         : relationshipObject;
 
+    if (Array.isArray(wrappedRelationshipObject.data)) {
+        return wrappedRelationshipObject.data.reduce((carrier, singleItem) =>
+            addRelationshipToEntity(carrier, pluralEntityKey, entityId, relationshipKey, singleItem), initialState
+        );
+    }
+
     const newState = (typeof relationshipObject === 'string')
         ? { ...initialState }
         : insertOrUpdateEntities(initialState, wrappedRelationshipObject);
