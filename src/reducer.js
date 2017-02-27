@@ -1,3 +1,4 @@
+import { Map } from 'immutable';
 import actionNames from './action-names';
 import {
     addRelationshipToEntity,
@@ -66,6 +67,8 @@ const reducerMap = {
     default: state => state,
 };
 
+const initialState = Map({});
+
 /**
  * The giadc-redux-json-api reducer
  *
@@ -73,8 +76,8 @@ const reducerMap = {
  * @param  {Object} action
  * @return {Object}
  */
-export default (state = {}, action) => {
-    const actionKey = Object.keys(reducerMap)
+export default (state = initialState, action) => {
+    const actionKey = action && Object.keys(reducerMap)
         .find(key => action.type && action.type.match(new RegExp(`^${key}(_[_A-Z]+)?$`)));
 
     if (actionKey) {

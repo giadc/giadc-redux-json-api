@@ -1,4 +1,6 @@
 import { expect } from 'chai';
+import { Map } from 'immutable';
+
 import {
     getEntity,
     getEntities,
@@ -8,9 +10,14 @@ import {
     getEntityMeta,
     getMostRecentlyLoaded,
     generateEntity,
-} from '../lib/giadc-redux-json-api';
+} from '../src/helpers';
+import { insertOrUpdateEntities } from '../src/json-api-transformer';
 
-const state = {"articles": {"meta": {"isLoading": true,"anotherMetaProperty": 666},"byId": {"1": {"meta": {"isLoading": true},"data": {"id": "1","title": "JSON API paints my bikeshed!","author": "9","comments": ["5", "12"]}}}},"people": {"byId": {"9": {"meta": {},"data": {"id": "9","first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"byId": {"5": {"meta": {},"data": {"id": "5","body": "First!","author": "2"}},"12": {"meta": {},"data": {"id": "12","body": "I like XML better","author": "9"}},"44": {"meta": {},"data": {"author": "9","body": "JSON API is love","id": "44"}}}}};
+import { initialJsonApiResponse } from './exampleData';
+
+const state = insertOrUpdateEntities(Map(), initialJsonApiResponse)
+    .mergeIn(['articles', 'meta'], { isLoading: true, anotherMetaProperty: 666 })
+    .setIn(['articles', 'byId', '1', 'meta', 'isLoading'], true);
 
 describe('getEntity', () => {
     it('should return an entity', () => {
@@ -22,8 +29,8 @@ describe('getEntity', () => {
         });
     });
 
-    it('should return `null` if the entity does not exist', () => {
-        expect(getEntity(state, 'article', 666)).to.equal(null);
+    it('should return `undefined` if the entity does not exist', () => {
+        expect(getEntity(state, 'article', 666)).to.equal(undefined);
     });
 });
 
@@ -40,16 +47,11 @@ describe('getEntities', () => {
                 "body": "I like XML better",
                 "id": "12"
             },
-            {
-                "author": "9",
-                "body": "JSON API is love",
-                "id": "44"
-            }
         ]);
     });
 
     it('should return a subset of entities', () => {
-        expect(getEntities(state, 'comments', ["5", "44"])).to.eql([
+        expect(getEntities(state, 'comments', ["5", "12"])).to.eql([
             {
                 "author": "2",
                 "body": "First!",
@@ -57,8 +59,8 @@ describe('getEntities', () => {
             },
             {
                 "author": "9",
-                "body": "JSON API is love",
-                "id": "44"
+                "body": "I like XML better",
+                "id": "12"
             }
         ]);
     });
@@ -105,9 +107,9 @@ describe('getEntitiesMeta', () => {
         expect(getEntitiesMeta(state, 'articles', 'isLoading')).to.eql(true);
     });
 
-    it('should return null if no meta data exists for an entity group', () => {
-        expect(getEntitiesMeta(state, 'articles', 'invalidMetaKey')).to.eql(null);
-        expect(getEntitiesMeta(state, 'authors')).to.eql(null);
+    it('should return `undefined` if no meta data exists for an entity group', () => {
+        expect(getEntitiesMeta(state, 'articles', 'invalidMetaKey')).to.eql(undefined);
+        expect(getEntitiesMeta(state, 'authors')).to.eql(undefined);
     })
 });
 
@@ -122,9 +124,9 @@ describe('getEntityMeta', () => {
         expect(getEntityMeta(state, 'articles', '1', 'isLoading')).to.eql(true);
     });
 
-    it('should return null if no meta data exists for an entity group', () => {
-        expect(getEntityMeta(state, 'articles', '1', 'invalidMetaKey')).to.eql(null);
-        expect(getEntityMeta(state, 'authors', '1')).to.eql(null);
+    it('should return `undefined` if no meta data exists for an entity group', () => {
+        expect(getEntityMeta(state, 'articles', '1', 'invalidMetaKey')).to.eql(undefined);
+        expect(getEntityMeta(state, 'authors', '1')).to.eql(undefined);
     })
 });
 

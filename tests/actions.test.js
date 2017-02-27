@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import pluralize from 'pluralize';
 
-import * as actions from '../lib/actions';
-import actionNames from '../lib/action-names';
+import * as actions from '../src/actions';
+import actionNames from '../src/action-names';
 
 describe('actions', () => {
     it('should create an action to load json api data', () => {
