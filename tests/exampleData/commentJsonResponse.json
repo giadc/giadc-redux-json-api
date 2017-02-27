@@ -1,0 +1,17 @@
+{
+   "data":{
+      "type":"comment",
+      "id":"44",
+      "attributes":{
+         "body":"This is a terrible comment"
+      },
+      "relationships":{
+         "author":{
+            "data":{
+               "type":"people",
+               "id":"9"
+            }
+         }
+      }
+   }
+}

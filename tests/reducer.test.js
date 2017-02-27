@@ -1,134 +1,143 @@
 import { expect } from 'chai';
-import { reducer } from '../lib/giadc-redux-json-api';
-import actionNames from '../lib/action-names';
+import { Map } from 'immutable';
 
-const initialJsonApiResponse = {"links":{"self":"http://example.com/articles","next":"http://example.com/articles?page[offset]=2","last":"http://example.com/articles?page[offset]=10"},"data":[{"type":"articles","id":"1","attributes":{"title":"JSON API paints my bikeshed!"},"relationships":{"author":{"links":{"self":"http://example.com/articles/1/relationships/author","related":"http://example.com/articles/1/author"},"data":{"type":"people","id":"9"}},"comments":{"links":{"self":"http://example.com/articles/1/relationships/comments","related":"http://example.com/articles/1/comments"},"data":[{"type":"comments","id":"5"},{"type":"comments","id":"12"}]}},"links":{"self":"http://example.com/articles/1"}}],"included":[{"type":"people","id":"9","attributes":{"first-name":"Dan","last-name":"Gebhardt","twitter":"dgeb"},"links":{"self":"http://example.com/people/9"}},{"type":"comments","id":"5","attributes":{"body":"First!"},"relationships":{"author":{"data":{"type":"people","id":"2"}}},"links":{"self":"http://example.com/comments/5"}},{"type":"comments","id":"12","attributes":{"body":"I like XML better"},"relationships":{"author":{"data":{"type":"people","id":"9"}}},"links":{"self":"http://example.com/comments/12"}}]};
-const initialExpectedState = {"articles": {"meta": {},"byId": {"1": {"meta": {},"data": {"title": "JSON API paints my bikeshed!","author": "9","comments": ["5", "12"]}}}},"people": {"meta": {},"byId": {"9": {"meta": {},"data": {"first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"meta": {},"byId": {"5": {"meta": {},"data": {"body": "First!","author": "2"}},"12": {"meta": {},"data": {"body": "I like XML better","author": "9"}}}}};
+import { reducer } from '../src/giadc-redux-json-api';
+import actionNames from '../src/action-names';
+import { initialJsonApiResponse, commentJsonResponse } from './exampleData';
+
+const initialExpectedState = reducer(Map({}), {
+    type: actionNames.LOAD_JSON_API_ENTITY_DATA,
+    data: initialJsonApiResponse
+});
 
 describe('reducer', () => {
     it('should return the initial state', () => {
-        expect(reducer(undefined, {})).to.eql({});
+        const result = reducer(undefined);
+        expect(Map.isMap(result)).to.equal(true);
+        expect(result.isEmpty()).to.equal(true);
     });
 
     it('should handle an initial LOAD_JSON_API_ENTITY_DATA', () => {
-        expect(reducer({}, {
-            type: actionNames.LOAD_JSON_API_ENTITY_DATA,
-            data: initialJsonApiResponse
-        })).to.eql(initialExpectedState);
+        expect(Map.isMap(initialExpectedState)).to.be.true;
+        expect(initialExpectedState.keySeq().toArray().sort()).to.eql(['articles', 'comments', 'people']);
+        expect(Map.isMap(initialExpectedState.get('articles'))).to.be.true;
+        expect(Map.isMap(initialExpectedState.get('comments'))).to.be.true;
+        expect(Map.isMap(initialExpectedState.get('people'))).to.be.true;
+
+        expect(initialExpectedState.getIn(['articles', 'byId', '1', 'data', 'author'])).to.equal('9');
+        expect(initialExpectedState.getIn(['articles', 'byId', '1', 'data', 'comments']).toArray()).to.eql(['5', '12']);
     });
     
     it('should handle an additional LOAD_JSON_API_ENTITY_DATA', () => {
-        const additionalJsonApiResponse = {"data":{"type":"comment","id":"44","attributes":{"body":"This is a terrible comment"},"relationships":{"author":{"data":{"type":"people","id":"9"}}}}};
-        const expectedState = {"articles": {"meta": {},"byId": {"1": {meta: {},data: {"title": "JSON API paints my bikeshed!","author": "9","comments": ["5", "12"]}}}},"people": {"meta": {},"byId": {"9": {meta: {},data: {"first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"meta": {},"byId": {"5": {meta: {},data: {"body": "First!","author": "2"}},"12": {meta: {},data: {"body": "I like XML better","author": "9"}},"44": {meta: {},data: {"body": "This is a terrible comment","author": "9"}}}}};
-
-        expect(reducer(initialExpectedState, {
+        const result = reducer(initialExpectedState, {
             type: actionNames.LOAD_JSON_API_ENTITY_DATA,
-            data: additionalJsonApiResponse
-        })).to.eql(expectedState);
+            data: commentJsonResponse,
+        });
+
+        expect(result.hasIn(['comments', 'byId', '44'])).to.be.true;
+        expect(result.getIn(['comments', 'byId', '44', 'data', 'body'])).to.eql('This is a terrible comment');
+        expect(result.getIn(['comments', 'byId', '44', 'data', 'author'])).to.eql('9');
     });
 
     it('should handle ADD_RELATIONSHIP_TO_ENTITY', () => {
-        const relationshipObject = {"type":"comment","id":"44","attributes":{"body":"This is a terrible comment"},"relationships":{"author":{"data":{"type":"people","id":"9"}}}};
-        const expectedState = {"articles": {"meta": {},"byId": {"1": {"meta": {},"data": {"title": "JSON API paints my bikeshed!","author": "9","comments": ["5", "12", "44"]}}}},"people": {"meta": {},"byId": {"9": {"meta": {},"data": {"first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"meta": {},"byId": {"5": {"meta": {},"data": {"body": "First!","author": "2"}},"12": {"meta": {},"data": {"body": "I like XML better","author": "9"}},"44": {"meta": {},"data": {"body": "This is a terrible comment","author": "9"}}}}};
-
-        expect(reducer(initialExpectedState, {
+        const result = reducer(initialExpectedState, {
             type: actionNames.ADD_RELATIONSHIP_TO_ENTITY + '_ARTICLE_COMMENTS',
             entityKey: 'article',
             entityId: '1',
             relationshipKey: 'comments',
-            relationshipObject
-        })).to.eql(expectedState);
+            relationshipObject: commentJsonResponse,
+        });
+
+        expect(result.hasIn(['comments', 'byId', '44'])).to.be.true;
+        expect(result.getIn(['articles', 'byId', '1', 'data', 'comments']).toArray()).to.eql(['5', '12', '44']);
     });
 
     it('should handle REMOVE_RELATIONSHIP_FROM_ENTITY', () => {
-        const expectedState = {"articles": {"meta": {},"byId": {"1": {"meta": {},"data": {"title": "JSON API paints my bikeshed!","author": "9","comments": ["12"]}}}},"people": {"meta": {},"byId": {"9": {"meta": {},"data": {"first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"meta": {},"byId": {"5": {"meta": {},"data": {"body": "First!","author": "2"}},"12": {"meta": {},"data": {"body": "I like XML better","author": "9"}}}}};
-
-        expect(reducer(initialExpectedState, {
+        const result = reducer(initialExpectedState, {
             type: actionNames.REMOVE_RELATIONSHIP_FROM_ENTITY + '_ARTICLE_COMMENTS',
             entityKey: 'article',
             entityId: '1',
             relationshipKey: 'comments',
             relationshipId: '5'
-        })).to.eql(expectedState);
+        });
+
+        expect(result.getIn(['articles', 'byId', '1', 'data', 'comments']).toArray()).to.eql(['12']);
     });
 
     it('should handle UPDATE_ENTITY', () => {
-        const expectedState = {"articles": {"meta": {},"byId": {"1": {"meta": {},"data": {"title": "JSON API does not paint my bikeshed!","author": "9","comments": ["5", "12"]}}}},"people": {"meta": {},"byId": {"9": {"meta": {},"data": {"first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"meta": {},"byId": {"5": {"meta": {},"data": {"body": "First!","author": "2"}},"12": {"meta": {},"data": {"body": "I like XML better","author": "9"}}}}};
-
-        expect(reducer(initialExpectedState, {
+        const result = reducer(initialExpectedState, {
             type: actionNames.UPDATE_ENTITY + '_ARTICLE',
             entityKey: 'article',
             entityId: '1',
             data: {
                 title:'JSON API does not paint my bikeshed!'
             }
-        })).to.eql(expectedState);
+        });
+
+        expect(result.getIn(['articles', 'byId', '1', 'data', 'title'])).to.eql('JSON API does not paint my bikeshed!');
     });
 
     it('should handle UPDATE_ENTITIES_META and replace a single metadata property', () => {
-        const expectedState = {"articles": {"meta": {"randomMetaKey": true},"byId": {"1": {"meta": {},"data": {"title": "JSON API paints my bikeshed!","author": "9","comments": ["5", "12"]}}}},"people": {"meta": {},"byId": {"9": {"meta": {},"data": {"first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"meta": {},"byId": {"5": {"meta": {},"data": {"body": "First!","author": "2"}},"12": {"meta": {},"data": {"body": "I like XML better","author": "9"}}}}};
-
-        expect(reducer(initialExpectedState, {
+        const result = reducer(initialExpectedState, {
             type: actionNames.UPDATE_ENTITIES_META + '_ARTICLES',
             entityKey: 'article',
             metaKey: 'randomMetaKey',
             value: true,
-        })).to.eql(expectedState);
+        });
+
+        expect(result.getIn(['articles', 'meta', 'randomMetaKey'])).to.equal(true);
     });
 
     it('should handle UPDATE_ENTITIES_META and completely replace the meta object', () => {
-        const expectedState = {"articles": {"meta": {"newMetaProperty": "newMetaValue"},"byId": {"1": {"meta": {},"data": {"title": "JSON API paints my bikeshed!","author": "9","comments": ["5", "12"]}}}},"people": {"meta": {},"byId": {"9": {"meta": {},"data": {"first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"meta": {},"byId": {"5": {"meta": {},"data": {"body": "First!","author": "2"}},"12": {"meta": {},"data": {"body": "I like XML better","author": "9"}}}}};
-
-        expect(reducer(initialExpectedState, {
+        const result = reducer(initialExpectedState, {
             type: actionNames.UPDATE_ENTITIES_META + '_ARTICLES',
             entityKey: 'article',
             metaKey: null,
             value: { newMetaProperty: 'newMetaValue' },
-        })).to.eql(expectedState);    
+        });
+
+        expect(result.getIn(['articles', 'meta']).toObject()).to.eql({ newMetaProperty: 'newMetaValue' });
     });
 
     it('should handle UPDATE_ENTITY_META and replace a single metadata property', () => {
-        const expectedState = {"articles": {"meta": {},"byId": {"1": {"meta": {"isLoading": true},"data": {"title": "JSON API paints my bikeshed!","author": "9","comments": ["5", "12"]}}}},"people": {"meta": {},"byId": {"9": {"meta": {},"data": {"first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"meta": {},"byId": {"5": {"meta": {},"data": {"body": "First!","author": "2"}},"12": {"meta": {},"data": {"body": "I like XML better","author": "9"}}}}};
-
-        expect(reducer(initialExpectedState, {
+        const result = reducer(initialExpectedState, {
             type: actionNames.UPDATE_ENTITY_META + '_ARTICLE',
             entityKey: 'article',
             entityId: '1',
             metaKey: 'isLoading',
             value: true,
-        })).to.eql(expectedState);
+        });
+
+        expect(result.getIn(['articles', 'byId', '1', 'meta', 'isLoading'])).to.equal(true);
     });
 
     it('should handle UPDATE_ENTITY_META and completely replace the meta object', () => {
-        const expectedState = {"articles": {"meta": {},"byId": {"1": {"meta": {"randomMetaKey": true},"data": {"title": "JSON API paints my bikeshed!","author": "9","comments": ["5", "12"]}}}},"people": {"meta": {},"byId": {"9": {"meta": {},"data": {"first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"meta": {},"byId": {"5": {"meta": {},"data": {"body": "First!","author": "2"}},"12": {"meta": {},"data": {"body": "I like XML better","author": "9"}}}}};
-
-        expect(reducer(initialExpectedState, {
+        const result = reducer(initialExpectedState, {
             type: actionNames.UPDATE_ENTITY_META + '_ARTICLE',
             entityKey: 'article',
             entityId: '1',
             metaKey: null,
-            value: {
-                randomMetaKey: true,
-            },
-        })).to.eql(expectedState);
+            value: { randomMetaKey: true },
+        });
+
+        expect(result.getIn(['articles', 'byId', '1', 'meta']).toObject()).to.eql({ randomMetaKey: true });
     });
 
     it('should handle REMOVE_ENTITY', () => {
-        const expectedState = {"articles": {"meta": {},"byId": {}},"people": {"meta": {},"byId": {"9": {"meta": {},"data": {"first-name": "Dan","last-name": "Gebhardt","twitter": "dgeb"}}}},"comments": {"meta": {},"byId": {"5": {"meta": {},"data": {"body": "First!","author": "2"}},"12": {"meta": {},"data": {"body": "I like XML better","author": "9"}}}}};
-
-        expect(reducer(initialExpectedState, {
+        const result = reducer(initialExpectedState, {
             type: actionNames.REMOVE_ENTITY + '_ARTICLE',
             entityKey: 'article',
             entityId: '1',
-        })).to.eql(expectedState);
+        });
+        expect(result.getIn(['articles', 'byId']).isEmpty()).to.equal(true);
     });
 
     it('should handle CLEAR_ENTITY_TYPE', () => {
-        const expectedState = {"articles":{"meta":{},"byId":{}},"people":{"meta":{},"byId":{"9":{"meta":{},"data":{"first-name":"Dan","last-name":"Gebhardt","twitter":"dgeb"}}}},"comments":{"meta":{},"byId":{"5":{"meta":{},"data":{"body":"First!","author":"2"}},"12":{"meta":{},"data":{"body":"I like XML better","author":"9"}}}}};
-
-        expect(reducer(initialExpectedState, {
+        const result = reducer(initialExpectedState, {
             type: actionNames.CLEAR_ENTITY_TYPE + '_ARTICLES',
             entityKey: 'articles',
-        })).to.eql(expectedState);
+        });
+
+        expect(result.get('articles')).to.equal(undefined);
     });
 });

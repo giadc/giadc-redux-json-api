@@ -11,14 +11,14 @@ import uuid from 'uuid';
  */
 export const getEntity = (state, key, id) => {
     const pluralKey = pluralize(key);
+    const entity = state.getIn([pluralKey, 'byId', id, 'data']);
 
-    if (
-        !state[pluralKey] || !state[pluralKey].byId || !state[pluralKey].byId[id] || !state[pluralKey].byId[id].data
-    ) {
-        return null;
-    }
-
-    return { ...state[pluralKey].byId[id].data, id };
+    return (entity === undefined)
+        ? undefined
+        : {
+            ...entity.toJS(),
+            id,
+        };
 };
 
 /**
@@ -33,13 +33,13 @@ export const getEntities = (state, key, ids = null) => {
     const pluralKey = pluralize(key);
 
     if (ids === null) {
-        const data = state[pluralKey];
-
-        if (!data || !data.byId) {
+        if (!state.hasIn([pluralKey, 'byId'])) {
             return [];
         }
 
-        return Object.keys(data.byId).map(id => getEntity(state, key, id));
+        const idsToFetch = state.getIn([pluralKey, 'byId']).keySeq().toArray();
+
+        return idsToFetch.map(id => getEntity(state, pluralKey, id));
     }
 
     return ids.map(id => getEntity(state, key, id))
@@ -70,17 +70,11 @@ export const getIds = jsonData => jsonData.data.map(entity => entity.id);
  * @param  {String} metaKey
  * @return {Mixed}
  */
-export const getEntitiesMeta = (state, entityKey, metaKey = null) => {
-    if (metaKey === null) {
-        return (state[entityKey] && state[entityKey].meta)
-            ? state[entityKey].meta
-            : null;
-    }
-
-    return (state[entityKey] && state[entityKey].meta && state[entityKey].meta[metaKey])
-        ? state[entityKey].meta[metaKey]
-        : null;
-};
+export const getEntitiesMeta = (state, entityKey, metaKey = null) => (
+    (metaKey === null)
+        ? state.getIn([entityKey, 'meta']) && state.getIn([entityKey, 'meta']).toJS()
+        : state.getIn([entityKey, 'meta', metaKey])
+);
 
 /**
  * Grab an Entity's meta data from the state
@@ -91,23 +85,11 @@ export const getEntitiesMeta = (state, entityKey, metaKey = null) => {
  * @param  {String} metaKey
  * @return {Mixed}
  */
-export const getEntityMeta = (state, entityKey, entityId, metaKey = null) => {
-    if (metaKey === null) {
-        return (
-            state[entityKey] && state[entityKey].byId && state[entityKey].byId[entityId]
-            && state[entityKey].byId[entityId].meta
-        )
-            ? state[entityKey].byId[entityId].meta
-            : null;
-    }
-
-    return (
-        state[entityKey] && state[entityKey].byId && state[entityKey].byId[entityId]
-        && state[entityKey].byId[entityId].meta && state[entityKey].byId[entityId].meta[metaKey]
-    )
-        ? state[entityKey].byId[entityId].meta[metaKey]
-        : null;
-};
+export const getEntityMeta = (state, entityKey, entityId, metaKey = null) => (
+    (metaKey === null)
+        ? state.getIn([entityKey, 'byId', entityId, 'meta']) && state.getIn([entityKey, 'byId', entityId, 'meta']).toJS()
+        : state.getIn([entityKey, 'byId', entityId, 'meta', metaKey])
+);
 
 /**
  * Generate a valid Entity with the given attributes
