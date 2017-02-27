@@ -108,21 +108,30 @@ const transformRelationships = (relationships) => {
 export const addRelationshipToEntity = (initialState, entityKey, entityId, relationshipKey, relationshipObject) => {
     const pluralEntityKey = pluralize(entityKey);
 
-    if (typeof relationshipObject === 'string') {
-        return initialState.updateIn(
-            [pluralEntityKey, 'byId', entityId, 'data', relationshipKey],
-            arr => arr.add(relationshipObject),
-        );
-    }
-
     const wrappedRelationshipObject = (!relationshipObject.data)
         ? { data: relationshipObject }
         : relationshipObject;
+
+    if (Array.isArray(wrappedRelationshipObject.data)) {
+        return wrappedRelationshipObject.data.reduce((carrier, singleItem) => 
+            addRelationshipToEntity(carrier, pluralEntityKey, entityId, relationshipKey, singleItem),
+            initialState
+        );
+    }
+
+    if (typeof wrappedRelationshipObject.data === 'string') {
+        return initialState.updateIn(
+            [pluralEntityKey, 'byId', entityId, 'data', relationshipKey],
+            Set(),
+            arr => arr.add(wrappedRelationshipObject.data),
+        );
+    }
 
     const newState = insertOrUpdateEntities(initialState, wrappedRelationshipObject);
 
     return newState.updateIn(
         [pluralEntityKey, 'byId', entityId, 'data', relationshipKey],
+        Set(),
         arr => arr.add(wrappedRelationshipObject.data.id),
     );
 };

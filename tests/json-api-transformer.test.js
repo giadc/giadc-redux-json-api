@@ -10,7 +10,7 @@ import {
     updateEntity,
     updateEntitiesMeta,
 } from '../src/json-api-transformer';
-import { initialJsonApiResponse, commentJsonResponse } from './exampleData';
+import { commentJsonResponse, commentsJsonResponse, initialJsonApiResponse } from './exampleData';
 
 chai.config.includeStack = true;
 const expect = chai.expect;
@@ -57,11 +57,7 @@ describe('insertOrUpdateEntities', () => {
     });
 
     it('throws an error if an entity doesn\'t have a type', () => {
-        const entityWithNoId = {
-            data: {
-                id: '123',
-            },
-        };
+        const entityWithNoId = { data: { id: '123', } };
 
         const functionCallWithInvalidEntity = () => insertOrUpdateEntities(Map({}), entityWithNoId);
         expect(functionCallWithInvalidEntity).to.throw(Error, /must have a `type`/);
@@ -87,6 +83,16 @@ describe('addRelationshipToEntity', ()=> {
         expect(result.getIn(['articles', 'byId', '1', 'data', 'comments']).toArray()).to.eql(['5', '12', '44']);
     });
 
+    it('Adds new relationships when given an array of objects', () => {
+        const state = insertOrUpdateEntities(Map({}), initialJsonApiResponse);
+        const result = addRelationshipToEntity(state, 'articles', '1', 'comments', commentsJsonResponse);
+
+
+        expect(result.getIn(['comments', 'byId']).keySeq().isSuperset(['5', '12', '42', '44'])).to.be.true;
+        expect(Set.isSet(result.getIn(['articles', 'byId', '1', 'data', 'comments']))).to.be.true;
+        expect(result.getIn(['articles', 'byId', '1', 'data', 'comments']).toArray()).to.eql(['5', '12', '42', '44']);
+    });
+
     it('Adds new relationships when given an id', () => {
         const state = insertOrUpdateEntities(Map({}), initialJsonApiResponse);
         const result = addRelationshipToEntity(state, 'articles', '1', 'comments', '42');
@@ -94,7 +100,15 @@ describe('addRelationshipToEntity', ()=> {
         // articles.byId[1].data.comments
         expect(Set.isSet(result.getIn(['articles', 'byId', '1', 'data', 'comments']))).to.be.true;
         expect(result.getIn(['articles', 'byId', '1', 'data', 'comments']).toArray()).to.eql(['5', '12', '42']);
-    })
+    });
+
+    it('Adds new relationships when given an array of ids', () => {
+        const state = insertOrUpdateEntities(Map({}), initialJsonApiResponse);
+        const result = addRelationshipToEntity(state, 'articles', '1', 'comments', ['42', '44']);
+
+        expect(Set.isSet(result.getIn(['articles', 'byId', '1', 'data', 'comments']))).to.be.true;
+        expect(result.getIn(['articles', 'byId', '1', 'data', 'comments']).toArray()).to.eql(['5', '12', '42', '44']);
+    });
 });
 
 describe('removeRelationshipFromEntity', () => {
@@ -103,8 +117,7 @@ describe('removeRelationshipFromEntity', () => {
         const result = removeRelationshipFromEntity(state, 'articles', '1', 'comments', '5');
 
         expect(result.getIn(['articles', 'byId', '1', 'data', 'comments']).toArray()).to.eql(['12']);
-        // expect(result.articles.byId['1'].data.comments).to.eql(['12']);
-    })
+    });
 });
 
 describe('updateEntity', () => {
