@@ -113,7 +113,7 @@ export const addRelationshipToEntity = (initialState, entityKey, entityId, relat
         : relationshipObject;
 
     if (Array.isArray(wrappedRelationshipObject.data)) {
-        return wrappedRelationshipObject.data.reduce((carrier, singleItem) => 
+        return wrappedRelationshipObject.data.reduce((carrier, singleItem) =>
             addRelationshipToEntity(carrier, pluralEntityKey, entityId, relationshipKey, singleItem),
             initialState
         );
