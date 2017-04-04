@@ -34,10 +34,17 @@ const insertOrUpdateEntity = (state, entity) => {
 
     const pluralKey = pluralize(entity.type);
 
-    return state.mergeIn(
-        [pluralKey, 'byId', entity.id, 'data'],
-        transformEntity(entity)
+    const stateWithUpdatedAttributes = state.mergeIn(
+        [pluralKey, 'byId', entity.id, 'attributes'],
+        entity.attributes
     );
+
+    return entity.relationships ?
+        stateWithUpdatedAttributes.mergeIn(
+            [pluralKey, 'byId', entity.id, 'relationships'],
+            transformRelationships(entity.relationships)
+        )
+        : stateWithUpdatedAttributes;
 };
 
 /**
@@ -56,23 +63,6 @@ const validateEntity = (entity) => {
 };
 
 /**
- * Get an Entity's attributes
- * and normalize its relationships
- *
- * @param  {Object} entity
- * @return {Object}
- */
-const transformEntity = (entity) => {
-    const transformedEntity = Map(entity.attributes);
-
-    return entity.relationships
-        ? transformedEntity.merge(
-            transformRelationships(entity.relationships)
-        )
-        : transformedEntity;
-};
-
-/**
  * Normalize an Entity's relationships
  *
  * @param  {Object} relationships
@@ -83,11 +73,11 @@ const transformRelationships = (relationships) => {
         (Array.isArray(relationships[key].data))
             ? {
                 ...transformedRelationships,
-                [pluralize(key)]: Set(relationships[key].data.map(relationship => relationship.id)),
+                [pluralize(key)]: Set(relationships[key].data.map(relationship => Map(relationship))),
             }
             : {
                 ...transformedRelationships,
-                [key]: relationships[key].data.id,
+                [key]: relationships[key].data,
             }
     ), {});
 
@@ -119,20 +109,15 @@ export const addRelationshipToEntity = (initialState, entityKey, entityId, relat
         );
     }
 
-    if (typeof wrappedRelationshipObject.data === 'string') {
-        return initialState.updateIn(
-            [pluralEntityKey, 'byId', entityId, 'data', relationshipKey],
-            Set(),
-            arr => arr.add(wrappedRelationshipObject.data),
-        );
-    }
-
     const newState = insertOrUpdateEntities(initialState, wrappedRelationshipObject);
 
     return newState.updateIn(
-        [pluralEntityKey, 'byId', entityId, 'data', relationshipKey],
+        [pluralEntityKey, 'byId', entityId, 'relationships', relationshipKey],
         Set(),
-        arr => arr.add(wrappedRelationshipObject.data.id),
+        arr => arr.add(Map({
+            id: wrappedRelationshipObject.data.id,
+            type: pluralize(wrappedRelationshipObject.data.type),
+        })),
     );
 };
 
@@ -148,10 +133,13 @@ export const addRelationshipToEntity = (initialState, entityKey, entityId, relat
  */
 export const removeRelationshipFromEntity = (initialState, entityKey, entityId, relationshipKey, relationshipId) => {
     const pluralEntityKey = pluralize(entityKey);
+    const relationshipMap = initialState
+        .getIn([pluralEntityKey, 'byId', entityId, 'relationships', relationshipKey])
+        .find(relationship => relationship.get('id') === relationshipId);
 
     return initialState.updateIn(
-        [pluralEntityKey, 'byId', entityId, 'data', relationshipKey],
-        arr => arr.remove(relationshipId),
+        [pluralEntityKey, 'byId', entityId, 'relationships', relationshipKey],
+        arr => arr.remove(relationshipMap),
     );
 };
 

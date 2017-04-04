@@ -24,8 +24,12 @@ describe('reducer', () => {
         expect(Map.isMap(initialExpectedState.get('comments'))).to.be.true;
         expect(Map.isMap(initialExpectedState.get('people'))).to.be.true;
 
-        expect(initialExpectedState.getIn(['articles', 'byId', '1', 'data', 'author'])).to.equal('9');
-        expect(initialExpectedState.getIn(['articles', 'byId', '1', 'data', 'comments']).toArray()).to.eql(['5', '12']);
+        expect(initialExpectedState.getIn(['articles', 'byId', '1', 'relationships', 'author', 'id'])).to.equal('9');
+        expect(
+            initialExpectedState.getIn(['articles', 'byId', '1', 'relationships', 'comments'])
+                .map(comment => comment.get('id'))
+                .toArray()
+            ).to.eql(['5', '12']);
     });
     
     it('should handle an additional LOAD_JSON_API_ENTITY_DATA', () => {
@@ -35,8 +39,8 @@ describe('reducer', () => {
         });
 
         expect(result.hasIn(['comments', 'byId', '44'])).to.be.true;
-        expect(result.getIn(['comments', 'byId', '44', 'data', 'body'])).to.eql('This is a terrible comment');
-        expect(result.getIn(['comments', 'byId', '44', 'data', 'author'])).to.eql('9');
+        expect(result.getIn(['comments', 'byId', '44', 'attributes', 'body'])).to.eql('This is a terrible comment');
+        expect(result.getIn(['comments', 'byId', '44', 'relationships', 'author', 'id'])).to.eql('9');
     });
 
     it('should handle ADD_RELATIONSHIP_TO_ENTITY', () => {
@@ -49,7 +53,12 @@ describe('reducer', () => {
         });
 
         expect(result.hasIn(['comments', 'byId', '44'])).to.be.true;
-        expect(result.getIn(['articles', 'byId', '1', 'data', 'comments']).toArray()).to.eql(['5', '12', '44']);
+        expect(
+            result
+                .getIn(['articles', 'byId', '1', 'relationships', 'comments'])
+                .map(comment => comment.get('id'))
+                .toArray()
+            ).to.eql(['5', '12', '44']);
     });
 
     it('should handle REMOVE_RELATIONSHIP_FROM_ENTITY', () => {
@@ -61,7 +70,11 @@ describe('reducer', () => {
             relationshipId: '5'
         });
 
-        expect(result.getIn(['articles', 'byId', '1', 'data', 'comments']).toArray()).to.eql(['12']);
+        expect(
+            result.getIn(['articles', 'byId', '1', 'relationships', 'comments'])
+                .map(comment => comment.get('id'))
+                .toArray()
+        ).to.eql(['12']);
     });
 
     it('should handle UPDATE_ENTITY', () => {
@@ -74,7 +87,7 @@ describe('reducer', () => {
             }
         });
 
-        expect(result.getIn(['articles', 'byId', '1', 'data', 'title'])).to.eql('JSON API does not paint my bikeshed!');
+        expect(result.getIn(['articles', 'byId', '1', 'attributes', 'title'])).to.eql('JSON API does not paint my bikeshed!');
     });
 
     it('should handle UPDATE_ENTITIES_META and replace a single metadata property', () => {
