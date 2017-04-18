@@ -1,0 +1,210 @@
+{
+    "users":{
+        "byId":{
+            "ec9f2054-87e1-11e5-92bb-04016484ad01":{
+                "data":{
+                    "email":"rmarganti@gannett.com",
+                    "firstName":"Ryan",
+                    "lastName":"Marganti",
+                    "department":"",
+                    "title":"Developer",
+                    "phone":"",
+                    "permissions":[
+                        "user.globalModify",
+                        "user.list",
+                        "user.globalList",
+                        "invitation.modify",
+                        "subscription.list",
+                        "invitation.create",
+                        "invitation.globalModify",
+                        "invitation.list",
+                        "invitation.globalCreate",
+                        "organization.modify",
+                        "invitation.globalList",
+                        "organization.create",
+                        "organization.globalModify",
+                        "application.modify",
+                        "organization.list",
+                        "application.create",
+                        "application.list",
+                        "user.modify",
+                        "permission.list"
+                    ],
+                    "subscriptions":[
+                        "e66839d0-b000-465c-a023-13e4c72f6055",
+                        "f5e128f1-b454-491f-a72d-85f16af12641"
+                    ]
+                }
+            }
+        },
+        "meta":{
+            "currentUser":"ec9f2054-87e1-11e5-92bb-04016484ad01"
+        }
+    },
+    "applications":{
+        "byId":{
+            "7be8ab0d-3d77-4bbe-b332-088c1f1ad395":{
+                "data":{
+                    "colorCode":"c0ffee",
+                    "description":"The grandest stand",
+                    "enabled":true,
+                    "image":null,
+                    "name":"Grandstand",
+                    "subscribable":false,
+                    "url":"http://grandstand.dev"
+                }
+            },
+            "f5e128f1-b454-491f-a72d-85f16af12641":{
+                "data":{
+                    "colorCode":"7f7f7f",
+                    "description":"Authentication portal",
+                    "enabled":true,
+                    "image":null,
+                    "name":"Avenue",
+                    "subscribable":false,
+                    "url":"http://localhost:3020"
+                }
+            }
+        }
+    },
+    "permissions":{
+        "byId":{
+            "user.globalModify":{
+                "data":{
+                    "tier":5,
+                    "name":"Modify any Organization's User"
+                }
+            },
+            "user.list":{
+                "data":{
+                    "tier":4,
+                    "name":"List Users"
+                }
+            },
+            "user.globalList":{
+                "data":{
+                    "tier":5,
+                    "name":"List any Organization's Users"
+                }
+            },
+            "invitation.modify":{
+                "data":{
+                    "tier":4,
+                    "name":"Modify Invitation"
+                }
+            },
+            "subscription.list":{
+                "data":{
+                    "tier":4,
+                    "name":"List Subscriptions"
+                }
+            },
+            "invitation.create":{
+                "data":{
+                    "tier":4,
+                    "name":"Create Invitation"
+                }
+            },
+            "invitation.globalModify":{
+                "data":{
+                    "tier":5,
+                    "name":"Modify Invitation for any Organization"
+                }
+            },
+            "invitation.list":{
+                "data":{
+                    "tier":4,
+                    "name":"List Invitations"
+                }
+            },
+            "invitation.globalCreate":{
+                "data":{
+                    "tier":5,
+                    "name":"Create Invitation for any Organization"
+                }
+            },
+            "organization.modify":{
+                "data":{
+                    "tier":4,
+                    "name":"Modify Organization"
+                }
+            },
+            "invitation.globalList":{
+                "data":{
+                    "tier":5,
+                    "name":"List Invitations for any Organization"
+                }
+            },
+            "organization.create":{
+                "data":{
+                    "tier":4,
+                    "name":"Create Organization"
+                }
+            },
+            "organization.globalModify":{
+                "data":{
+                    "tier":5,
+                    "name":"Modify any Organization"
+                }
+            },
+            "application.modify":{
+                "data":{
+                    "tier":4,
+                    "name":"Modify Application"
+                }
+            },
+            "organization.list":{
+                "data":{
+                    "tier":4,
+                    "name":"List Organizations"
+                }
+            },
+            "application.create":{
+                "data":{
+                    "tier":4,
+                    "name":"Create Application"
+                }
+            },
+            "application.list":{
+                "data":{
+                    "tier":4,
+                    "name":"List Applications"
+                }
+            },
+            "user.modify":{
+                "data":{
+                    "tier":4,
+                    "name":"Modify User"
+                }
+            },
+            "permission.list":{
+                "data":{
+                    "tier":4,
+                    "name":"List Permissions"
+                }
+            }
+        }
+    },
+    "subscriptions":{
+        "byId":{
+            "e66839d0-b000-465c-a023-13e4c72f6055":{
+                "data":{
+                    "name":"Standard Access",
+                    "price":0,
+                    "priceInterval":"",
+                    "userLimit":0,
+                    "application":"7be8ab0d-3d77-4bbe-b332-088c1f1ad395"
+                }
+            },
+            "f5e128f1-b454-491f-a72d-85f16af12641":{
+                "data":{
+                    "name":"Standard Access",
+                    "price":0,
+                    "priceInterval":"",
+                    "userLimit":0,
+                    "application":"f5e128f1-b454-491f-a72d-85f16af12641"
+                }
+            }
+        }
+    }
+}

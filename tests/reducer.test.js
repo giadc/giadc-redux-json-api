@@ -1,9 +1,9 @@
 import { expect } from 'chai';
-import { Map } from 'immutable';
+import { Map, Set } from 'immutable';
 
 import { reducer } from '../src/giadc-redux-json-api';
 import actionNames from '../src/action-names';
-import { initialJsonApiResponse, commentJsonResponse } from './exampleData';
+import { commentJsonResponse, initialJsonApiResponse, serverSideRendering } from './exampleData';
 
 const initialExpectedState = reducer(Map({}), {
     type: actionNames.LOAD_JSON_API_ENTITY_DATA,
@@ -16,6 +16,14 @@ describe('reducer', () => {
         expect(Map.isMap(result)).to.equal(true);
         expect(result.isEmpty()).to.equal(true);
     });
+
+    it('should convert a provided JS state to a Map', () => {
+        const result = reducer(serverSideRendering);
+        expect(Map.isMap(result)).to.equal(true);
+        expect(Set.isSet(
+            result.getIn(['users', 'byId', 'ec9f2054-87e1-11e5-92bb-04016484ad01', 'data', 'permissions'])
+        ));
+    })
 
     it('should handle an initial LOAD_JSON_API_ENTITY_DATA', () => {
         expect(Map.isMap(initialExpectedState)).to.be.true;

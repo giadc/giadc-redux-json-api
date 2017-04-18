@@ -1,4 +1,4 @@
-import { Map } from 'immutable';
+import { fromJS, isKeyed, Map } from 'immutable';
 import actionNames from './action-names';
 import {
     addRelationshipToEntity,
@@ -67,8 +67,6 @@ const reducerMap = {
     default: state => state,
 };
 
-const initialState = Map({});
-
 /**
  * The giadc-redux-json-api reducer
  *
@@ -76,13 +74,24 @@ const initialState = Map({});
  * @param  {Object} action
  * @return {Object}
  */
-export default (state = initialState, action) => {
+export default (state = {}, action) => {
     const actionKey = action && Object.keys(reducerMap)
         .find(key => action.type && action.type.match(new RegExp(`^${key}(_[_A-Z]+)?$`)));
 
     if (actionKey) {
-        return reducerMap[actionKey](state, action);
+        return reducerMap[actionKey](Map.isMap(state) ? state : convertTopImmutable(state), action);
     }
 
-    return reducerMap.default(state, action);
+    return reducerMap.default(Map.isMap(state) ? state : convertTopImmutable(state), action);
 };
+
+/**
+ * Converts a JS Object to an Immutable
+ * data structure composed of Maps and Sets
+ *
+ * @param  {Object} state
+ * @return {Map}
+ */
+const convertTopImmutable = state => fromJS(state, (key, value) => (
+    Array.isArray(value.toJS()) ? value.toSet() : value.toMap()
+));
