@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import pluralize from 'pluralize';
 
 import * as actions from '../src/actions';
@@ -19,7 +18,7 @@ describe('actions', () => {
           type: actionNames.LOAD_JSON_API_ENTITY_DATA,
           data
         };
-        expect(actions.loadJsonApiEntityData(data)).to.eql(expectedAction);
+        expect(actions.loadJsonApiEntityData(data)).toEqual(expectedAction);
     });
 
     it('should create an action to add a relationship to an entity', () => {
@@ -37,10 +36,10 @@ describe('actions', () => {
             type: actionNames.ADD_RELATIONSHIP_TO_ENTITY + '_ARTICLE_READERS',
             entityKey,
             entityId,
-            relationshipKey,    
+            relationshipKey,
             relationshipObject
         };
-        expect(actions.addRelationshipToEntity(entityKey, entityId, relationshipKey, relationshipObject)).to.eql(expectedAction);
+        expect(actions.addRelationshipToEntity(entityKey, entityId, relationshipKey, relationshipObject)).toEqual(expectedAction);
     });
 
     it('should create an action to remove a relationship from an entity', () => {
@@ -52,10 +51,10 @@ describe('actions', () => {
             type: actionNames.REMOVE_RELATIONSHIP_FROM_ENTITY + '_ARTICLE_READERS',
             entityKey,
             entityId,
-            relationshipKey,    
+            relationshipKey,
             relationshipId
         };
-        expect(actions.removeRelationshipFromEntity(entityKey, entityId, relationshipKey, relationshipId)).to.eql(expectedAction);
+        expect(actions.removeRelationshipFromEntity(entityKey, entityId, relationshipKey, relationshipId)).toEqual(expectedAction);
     });
 
     it('should create an action to update an entity', () => {
@@ -68,9 +67,9 @@ describe('actions', () => {
             type: actionNames.UPDATE_ENTITY + '_ARTICLE',
             entityKey,
             entityId,
-            data    
+            data
         };
-        expect(actions.updateEntity(entityKey, entityId, data)).to.eql(expectedAction);
+        expect(actions.updateEntity(entityKey, entityId, data)).toEqual(expectedAction);
     });
 
     it('should create an action to update metadata for an entity group', () => {
@@ -85,7 +84,7 @@ describe('actions', () => {
             value,
         };
 
-        expect(actions.updateEntitiesMeta(entityKey, metaKey, value)).to.eql(expectedAction);
+        expect(actions.updateEntitiesMeta(entityKey, metaKey, value)).toEqual(expectedAction);
     });
 
     it('should create an action to update metadata for an entity', () => {
@@ -102,7 +101,7 @@ describe('actions', () => {
             value,
         };
 
-        expect(actions.updateEntityMeta(entityKey, entityId, metaKey, value)).to.eql(expectedAction);
+        expect(actions.updateEntityMeta(entityKey, entityId, metaKey, value)).toEqual(expectedAction);
     });
 
     it('should create an action to delete an entity', () => {
@@ -115,7 +114,7 @@ describe('actions', () => {
             entityId,
         };
 
-        expect(actions.removeEntity(entityKey, entityId)).to.eql(expectedAction);
+        expect(actions.removeEntity(entityKey, entityId)).toEqual(expectedAction);
     });
 
     it('should create an action to delete an entity type', () => {
@@ -126,6 +125,6 @@ describe('actions', () => {
             entityKey,
         };
 
-        expect(actions.clearEntityType(entityKey)).to.eql(expectedAction);
+        expect(actions.clearEntityType(entityKey)).toEqual(expectedAction);
     });
 });

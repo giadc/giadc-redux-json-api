@@ -1,11 +1,11 @@
-import { expect } from 'chai';
-import { Map, Set } from 'immutable';
+import * as R from 'ramda';
+import { ResourceObject } from 'ts-json-api';
 
 import { reducer } from '../src/giadc-redux-json-api';
 import actionNames from '../src/action-names';
 import { commentJsonResponse, initialJsonApiResponse, serverSideRendering } from './exampleData';
 
-const initialExpectedState = reducer(Map({}), {
+const initialExpectedState = reducer({}, {
     type: actionNames.LOAD_JSON_API_ENTITY_DATA,
     data: initialJsonApiResponse
 });
@@ -13,38 +13,27 @@ const initialExpectedState = reducer(Map({}), {
 describe('reducer', () => {
     it('should return the initial state', () => {
         const result = reducer(undefined);
-        expect(Map.isMap(result)).to.equal(true);
-        expect(result.isEmpty()).to.equal(true);
+        expect(result).toEqual({});
     });
-
-    it('should convert a provided JS state to a Map', () => {
-        const result = reducer(serverSideRendering);
-        expect(Map.isMap(result)).to.equal(true);
-        expect(Set.isSet(
-            result.getIn(['users', 'byId', 'ec9f2054-87e1-11e5-92bb-04016484ad01', 'data', 'permissions'])
-        ));
-    })
 
     it('should handle an initial LOAD_JSON_API_ENTITY_DATA', () => {
-        expect(Map.isMap(initialExpectedState)).to.be.true;
-        expect(initialExpectedState.keySeq().toArray().sort()).to.eql(['articles', 'comments', 'people']);
-        expect(Map.isMap(initialExpectedState.get('articles'))).to.be.true;
-        expect(Map.isMap(initialExpectedState.get('comments'))).to.be.true;
-        expect(Map.isMap(initialExpectedState.get('people'))).to.be.true;
-
-        expect(initialExpectedState.getIn(['articles', 'byId', '1', 'data', 'author'])).to.equal('9');
-        expect(initialExpectedState.getIn(['articles', 'byId', '1', 'data', 'comments']).toArray()).to.eql(['5', '12']);
+        expect(Object.keys(initialExpectedState).sort()).toEqual(['articles', 'comments', 'people']);
+        expect(R.path(['articles', 'byId', '1', 'relationships', 'author', 'data', 'id'], initialExpectedState)).toEqual('9');
+        expect(
+            (<ResourceObject[]>R.path(['articles', 'byId', '1', 'relationships', 'comments', 'data'], initialExpectedState))
+            .map(comment => comment.id)
+        ).toEqual(['5', '12']);
     });
-    
+
     it('should handle an additional LOAD_JSON_API_ENTITY_DATA', () => {
         const result = reducer(initialExpectedState, {
             type: actionNames.LOAD_JSON_API_ENTITY_DATA,
             data: commentJsonResponse,
         });
 
-        expect(result.hasIn(['comments', 'byId', '44'])).to.be.true;
-        expect(result.getIn(['comments', 'byId', '44', 'data', 'body'])).to.eql('This is a terrible comment');
-        expect(result.getIn(['comments', 'byId', '44', 'data', 'author'])).to.eql('9');
+        expect(R.path(['comments', 'byId', '44'], result)).toBeTruthy;
+        expect(R.path(['comments', 'byId', '44', 'attributes', 'body'], result)).toEqual('This is a terrible comment');
+        expect(R.path(['comments', 'byId', '44', 'relationships', 'author', 'data', 'id'], result)).toEqual('9');
     });
 
     it('should handle ADD_RELATIONSHIP_TO_ENTITY', () => {
@@ -56,8 +45,11 @@ describe('reducer', () => {
             relationshipObject: commentJsonResponse,
         });
 
-        expect(result.hasIn(['comments', 'byId', '44'])).to.be.true;
-        expect(result.getIn(['articles', 'byId', '1', 'data', 'comments']).toArray()).to.eql(['5', '12', '44']);
+        expect(R.path(['comments', 'byId', '44'], result)).toBeTruthy;
+        expect(
+            (<ResourceObject[]>R.path(['articles', 'byId', '1', 'relationships', 'comments', 'data'], result))
+                .map(comment => comment.id)
+        ).toEqual(['5', '12', '44']);
     });
 
     it('should handle REMOVE_RELATIONSHIP_FROM_ENTITY', () => {
@@ -68,8 +60,10 @@ describe('reducer', () => {
             relationshipKey: 'comments',
             relationshipId: '5'
         });
-
-        expect(result.getIn(['articles', 'byId', '1', 'data', 'comments']).toArray()).to.eql(['12']);
+        expect(
+            (<ResourceObject[]>R.path(['articles', 'byId', '1', 'relationships', 'comments', 'data'], result))
+                .map(comment => comment.id)
+        ).toEqual(['12']);
     });
 
     it('should handle UPDATE_ENTITY', () => {
@@ -82,7 +76,7 @@ describe('reducer', () => {
             }
         });
 
-        expect(result.getIn(['articles', 'byId', '1', 'data', 'title'])).to.eql('JSON API does not paint my bikeshed!');
+        expect(R.path(['articles', 'byId', '1', 'attributes', 'title'], result)).toEqual('JSON API does not paint my bikeshed!');
     });
 
     it('should handle UPDATE_ENTITIES_META and replace a single metadata property', () => {
@@ -93,7 +87,7 @@ describe('reducer', () => {
             value: true,
         });
 
-        expect(result.getIn(['articles', 'meta', 'randomMetaKey'])).to.equal(true);
+        expect(R.path(['articles', 'meta', 'randomMetaKey'], result)).toEqual(true);
     });
 
     it('should handle UPDATE_ENTITIES_META and completely replace the meta object', () => {
@@ -104,7 +98,7 @@ describe('reducer', () => {
             value: { newMetaProperty: 'newMetaValue' },
         });
 
-        expect(result.getIn(['articles', 'meta']).toObject()).to.eql({ newMetaProperty: 'newMetaValue' });
+        expect(R.path(['articles', 'meta'], result)).toEqual({ newMetaProperty: 'newMetaValue' });
     });
 
     it('should handle UPDATE_ENTITY_META and replace a single metadata property', () => {
@@ -116,7 +110,7 @@ describe('reducer', () => {
             value: true,
         });
 
-        expect(result.getIn(['articles', 'byId', '1', 'meta', 'isLoading'])).to.equal(true);
+        expect(R.path(['articles', 'byId', '1', 'meta', 'isLoading'], result)).toEqual(true);
     });
 
     it('should handle UPDATE_ENTITY_META and completely replace the meta object', () => {
@@ -128,7 +122,7 @@ describe('reducer', () => {
             value: { randomMetaKey: true },
         });
 
-        expect(result.getIn(['articles', 'byId', '1', 'meta']).toObject()).to.eql({ randomMetaKey: true });
+        expect(R.path(['articles', 'byId', '1', 'meta'], result)).toEqual({ randomMetaKey: true });
     });
 
     it('should handle REMOVE_ENTITY', () => {
@@ -137,7 +131,7 @@ describe('reducer', () => {
             entityKey: 'article',
             entityId: '1',
         });
-        expect(result.getIn(['articles', 'byId']).isEmpty()).to.equal(true);
+        expect(result.articles.byId).toEqual({});
     });
 
     it('should handle CLEAR_ENTITY_TYPE', () => {
@@ -146,6 +140,6 @@ describe('reducer', () => {
             entityKey: 'articles',
         });
 
-        expect(result.get('articles')).to.equal(undefined);
+        expect(result.articles).toEqual(undefined);
     });
 });

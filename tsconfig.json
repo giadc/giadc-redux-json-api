@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "declaration": true,
+        "declarationDir": "./types",
+        "jsx": "react",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "outDir": "lib",
+        "paths": {
+            "*": [
+                "node_modules/*",
+                "src/types/*"
+            ]
+        },
+        "sourceMap": true,
+        "target": "es2016"
+    },
+    "include": [
+        "src/**/*",
+        "../ts-json-api/**/*"
+    ]
+}
