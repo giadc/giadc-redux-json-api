@@ -9,6 +9,7 @@ export interface iAddRelationshipAction {
     type: string,
     entityKey: string,
     entityId: string,
+    relationshipKey: string,
     relationshipObject: ResourceObject | JsonApiResponseWithData,
 }
 

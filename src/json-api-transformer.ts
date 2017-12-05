@@ -139,7 +139,7 @@ export const updateEntity = (
     entityId: string,
     data: ResourceObject | Attributes
 ) => {
-    const attributeLens = R.lensPath([pluralize(entityKey), 'byId', entityId, 'attributes']),
+    const attributeLens = R.lensPath([pluralize(entityKey), 'byId', entityId, 'attributes']);
 
     return R.over(
         attributeLens,

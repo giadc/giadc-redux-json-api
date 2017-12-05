@@ -1,6 +1,6 @@
 import actionNames from './action-names';
 import * as actions from './interfaces/actions';
-import { iState } from './interfaces/state';
+import { iReducer, iState } from './interfaces/state';
 import {
     addRelationshipToEntity,
     clearEntityType,
@@ -10,7 +10,7 @@ import {
     updateEntity,
     updateEntitiesMeta,
     updateEntityMeta,
-} from './json-api-transformer';
+} from './json-api-transformer'
 
 const reducerMap = {
     [actionNames.LOAD_JSON_API_ENTITY_DATA]: (state: iState, action: actions.iLoadAction) => insertOrUpdateEntities(state, action.data),
@@ -79,7 +79,7 @@ export default (state: iState = {}, action?: actions.Action) => {
         .find(key => action.type && !!action.type.match(new RegExp(`^${key}(_[_A-Z]+)?$`)));
 
     if (actionKey) {
-        return reducerMap[actionKey](state, action);
+        return (<iReducer>reducerMap[actionKey])(state, action);
     }
 
     return reducerMap.default(state);
