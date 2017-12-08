@@ -3,10 +3,8 @@ export {
     getEntityMeta,
     getEntities,
     getEntitiesMeta,
-    getMostRecentlyLoaded,
     getId,
     getIds,
-    generateEntity,
 } from './helpers';
 
 export { default as reducer } from './reducer';

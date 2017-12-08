@@ -116,20 +116,3 @@ getId(jsonResponse);
 // Extract collection ID's from JSON API response
 getIds(jsonResponse);
 ```
-
-## Generate an entity locally
-Sometimes you may need to generate and store an entity that didn't actually come from a JSON API.    
-__giadc-redux-json-api__ provides a simple `generateEntity` helper function for that.
-
-```javascript
-import { generateEntity, loadJsonApiEntityData, addRelationshipToEntity } from 'giadc-redux-json-api';
-
-// Generate an Article entity and store it
-// generateEntity(entityKey, attributes);
-const article = generateEntity('article', { id: '123', title: 'Example Title' });
-dispatch(loadJsonApiData(article));
-
-// If no ID is provided, one will be generated automatically using UUID v4
-const user = generateEntity('user', { name: 'Bob Ross' });
-dispatch(addRelationshipToEntity('articles', '123', 'readers', user));
-```

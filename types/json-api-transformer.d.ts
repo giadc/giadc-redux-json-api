@@ -1,12 +1,13 @@
+import { Attributes, ResourceObject, JsonApiResponseWithData } from 'ts-json-api';
+import { iState } from './interfaces/state';
 /**
  * Insert an Entity or group of Entities
  * into the state as well as any includes
  *
- * @param  {Object} state
- * @param  {Object} payload
- * @return {Object}
+ * @param state
+ * @param payload
  */
-export declare const insertOrUpdateEntities: (state: any, payload: any) => any;
+export declare const insertOrUpdateEntities: (state: iState, payload: ResourceObject | ResourceObject[] | JsonApiResponseWithData) => iState;
 /**
  * Insert an Entity into the state and
  * add it as a relationship to another Entity
@@ -18,7 +19,7 @@ export declare const insertOrUpdateEntities: (state: any, payload: any) => any;
  * @param  {Object|String}  relationshipObject  Can be either a valid JSON API object or a string ID
  * @return {Object}
  */
-export declare const addRelationshipToEntity: (initialState: any, entityKey: any, entityId: any, relationshipKey: any, relationshipObject: any) => any;
+export declare const addRelationshipToEntity: (initialState: iState, entityKey: string, entityId: string, relationshipKey: string, relationshipObject: ResourceObject | JsonApiResponseWithData) => iState;
 /**
  * Remove a relationship an Entity
  *
@@ -29,7 +30,7 @@ export declare const addRelationshipToEntity: (initialState: any, entityKey: any
  * @param  {String} relationshipId
  * @return {Object}
  */
-export declare const removeRelationshipFromEntity: (initialState: any, entityKey: any, entityId: any, relationshipKey: any, relationshipId: any) => any;
+export declare const removeRelationshipFromEntity: (initialState: iState, entityKey: string, entityId: string, relationshipKey: string, relationshipId: string) => iState;
 /**
  * Update an Entity's attributes
  *
@@ -39,7 +40,7 @@ export declare const removeRelationshipFromEntity: (initialState: any, entityKey
  * @param  {Object} data
  * @return {Object}
  */
-export declare const updateEntity: (state: any, entityKey: any, entityId: any, data: any) => any;
+export declare const updateEntity: (state: iState, entityKey: string, entityId: string, data: Attributes | ResourceObject) => iState;
 /**
  * Update the meta data for an Entity group
  *
@@ -49,7 +50,7 @@ export declare const updateEntity: (state: any, entityKey: any, entityId: any, d
  * @param  {Mixed}  value
  * @return {Object}
  */
-export declare const updateEntitiesMeta: (state: any, entityKey: any, metaKey: any, value: any) => any;
+export declare const updateEntitiesMeta: (state: iState, entityKey: string, metaKey: string, value: any) => iState;
 /**
  * Update the meta data for an Entity
  *
@@ -60,7 +61,7 @@ export declare const updateEntitiesMeta: (state: any, entityKey: any, metaKey: a
  * @param  {Mixed}  value
  * @return {Object}
  */
-export declare const updateEntityMeta: (state: any, entityKey: any, entityId: any, metaKey: any, value: any) => any;
+export declare const updateEntityMeta: (state: iState, entityKey: string, entityId: string, metaKey: string, value: any) => iState;
 /**
  * Remove a single Entity
  *
@@ -69,7 +70,7 @@ export declare const updateEntityMeta: (state: any, entityKey: any, entityId: an
  * @param  {String} entityId
  * @return {Object}
  */
-export declare const removeEntity: (state: any, entityKey: any, entityId: any) => any;
+export declare const removeEntity: (state: iState, entityKey: string, entityId: string) => iState;
 /**
  * Clear all of the Entities out of an Entity type
  *
@@ -77,4 +78,4 @@ export declare const removeEntity: (state: any, entityKey: any, entityId: any) =
  * @param  {String} entityKey
  * @return {Object}
  */
-export declare const clearEntityType: (state: any, entityKey: any) => any;
+export declare const clearEntityType: (state: iState, entityKey: string) => iState;

@@ -18,7 +18,6 @@
         "target": "es2016"
     },
     "include": [
-        "src/**/*",
-        "../ts-json-api/**/*"
+        "src/**/*"
     ]
 }

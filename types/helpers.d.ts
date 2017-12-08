@@ -1,3 +1,4 @@
+import { Entity, JsonApiResponseWithData } from 'ts-json-api';
 import { iState } from './interfaces/state';
 /**
  * Grab an Entity from the state
@@ -7,25 +8,25 @@ import { iState } from './interfaces/state';
  * @param  {String} id
  * @return {Object}
  */
-export declare const getEntity: (state: iState, key: string, id: string) => any;
+export declare const getEntity: (state: iState, key: string, id: string) => Entity;
 /**
  * Get an array of Entities from the state
  */
-export declare const getEntities: (state: iState, key: string, ids?: string[]) => any[];
+export declare const getEntities: (state: iState, key: string, ids?: string[]) => Entity[];
 /**
  * Grab the ID from JSON API response containing a single Entity
  *
  * @param  {Object} jsonData
  * @return {String}
  */
-export declare const getId: (jsonData: any) => string;
+export declare const getId: (jsonData: JsonApiResponseWithData) => string;
 /**
  * Grab the ID's from a JSON API response containing an array of Entities
  *
  * @param  {Object} jsonData
  * @return {Array}
  */
-export declare const getIds: (jsonData: any) => string[];
+export declare const getIds: (jsonData: JsonApiResponseWithData) => string[];
 /**
  * Grab an Entity group's meta data from the state
  *
@@ -34,7 +35,7 @@ export declare const getIds: (jsonData: any) => string[];
  * @param  {String} metaKey
  * @return {Mixed}
  */
-export declare const getEntitiesMeta: (state: iState, entityKey: string, metaKey?: string) => any;
+export declare const getEntitiesMeta: (state: iState, entityKey: string, metaKey?: string) => {};
 /**
  * Grab an Entity's meta data from the state
  *
@@ -44,4 +45,4 @@ export declare const getEntitiesMeta: (state: iState, entityKey: string, metaKey
  * @param  {String} metaKey
  * @return {Mixed}
  */
-export declare const getEntityMeta: (state: iState, entityKey: string, entityId: string, metaKey?: string) => any;
+export declare const getEntityMeta: (state: iState, entityKey: string, entityId: string, metaKey?: string) => {};

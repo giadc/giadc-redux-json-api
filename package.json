@@ -7,7 +7,6 @@
     "build": "rimraf ./lib && rimraf ./types && tsc",
     "build:watch": "rimraf ./lib && rimraf ./types && tsc --watch",
     "test": "jest",
-    "test:watch": "jest --watch",
     "prepublish": "npm run build"
   },
   "repository": {
@@ -27,13 +26,17 @@
     "jest": "^21.2.1",
     "rimraf": "^2.6.2",
     "ts-jest": "^21.2.3",
+    "tslint": "^5.8.0",
     "typescript": "^2.6.1"
   },
   "jest": {
     "transform": {
       ".(ts|tsx)": "<rootDir>/__tests__/preprocessor.js"
     },
-    "testPathIgnorePatterns": ["node_modules", "ts-json-api"],
+    "testPathIgnorePatterns": [
+      "node_modules",
+      "ts-json-api/"
+    ],
     "testRegex": "(\\.(test|spec))\\.(ts|tsx|js)$",
     "moduleFileExtensions": [
       "ts",
