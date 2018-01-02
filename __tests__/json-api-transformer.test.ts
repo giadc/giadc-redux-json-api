@@ -1,4 +1,4 @@
-import { JsonApiResponseWithData, ResourceObject } from 'ts-json-api';
+import { iJsonApiResponseWithData, iResourceObject } from 'ts-json-api';
 import * as R from 'ramda';
 
 import {
@@ -9,6 +9,8 @@ import {
     removeRelationshipFromEntity,
     updateEntity,
     updateEntitiesMeta,
+    setRelationshipOnEntity,
+    clearRelationshipOnEntity,
 } from '../src/json-api-transformer';
 import { commentJsonResponse, commentsJsonResponse, initialJsonApiResponse } from './exampleData';
 
@@ -19,7 +21,7 @@ describe('insertOrUpdateEntities', () => {
         expect(Object.keys(result).sort()).toEqual(['articles', 'comments', 'people']);
         expect(R.path(['articles', 'byId', '1', 'relationships', 'author', 'data', 'id'], result)).toEqual('9');
         expect(
-            (<ResourceObject[]>R.path(['articles', 'byId', '1', 'relationships', 'comments', 'data'], result))
+            (<iResourceObject[]>R.path(['articles', 'byId', '1', 'relationships', 'comments', 'data'], result))
                 .map(comment => comment.id)
         ).toEqual(['5', '12']);
     });
@@ -64,7 +66,7 @@ describe('addRelationshipToEntity', ()=> {
 
         expect(Object.keys(R.path(['comments', 'byId'], result))).toEqual(['5', '12', '44']);
         expect(
-            (<ResourceObject[]>R.path(['articles', 'byId', '1', 'relationships', 'comments', 'data'], result))
+            (<iResourceObject[]>R.path(['articles', 'byId', '1', 'relationships', 'comments', 'data'], result))
                 .map(comment => comment.id)
         ).toEqual(['5', '12', '44']);
     });
@@ -75,7 +77,7 @@ describe('addRelationshipToEntity', ()=> {
 
         expect(Object.keys(R.path(['comments', 'byId'], result))).toEqual(['5', '12', '44']);
         expect(
-            (<ResourceObject[]>R.path(['articles', 'byId', '1', 'relationships', 'comments', 'data'], result))
+            (<iResourceObject[]>R.path(['articles', 'byId', '1', 'relationships', 'comments', 'data'], result))
                 .map(comment => comment.id)
         ).toEqual(['5', '12', '44']);
    });
@@ -87,9 +89,9 @@ describe('addRelationshipToEntity', ()=> {
 
         expect(Object.keys(R.path(['comments', 'byId'], result))).toEqual(['5', '12', '42', '44']);
         expect(
-            (<ResourceObject[]>R.path(['articles', 'byId', '1', 'relationships', 'comments', 'data'], result))
+            (<iResourceObject[]>R.path(['articles', 'byId', '1', 'relationships', 'comments', 'data'], result))
                 .map(comment => comment.id)
-        ).toEqual(['5', '12', '42', '44']);
+        ).toEqual(['42', '44', '5', '12']);
     });
 });
 
@@ -99,11 +101,52 @@ describe('removeRelationshipFromEntity', () => {
         const result = removeRelationshipFromEntity(state, 'articles', '1', 'comments', '5');
 
         expect(
-            (<ResourceObject[]>R.path(['articles', 'byId', '1', 'relationships', 'comments', 'data'], result))
+            (<iResourceObject[]>R.path(['articles', 'byId', '1', 'relationships', 'comments', 'data'], result))
                 .map(comment => comment.id)
         ).toEqual(['12']);
     });
 });
+
+describe('setRelationshipOnEntity', () => {
+    it('sets a single relationship', () => {
+        const state = insertOrUpdateEntities({}, initialJsonApiResponse);
+        const result = setRelationshipOnEntity(state, 'articles', '1', 'author', {
+            type: 'people',
+            id: '4444',
+        });
+
+        expect(
+            (<iResourceObject[]>R.path(['articles', 'byId', '1', 'relationships', 'author', 'data', 'id'], result))
+        ).toEqual('4444');
+    });
+
+    it('sets a relationship to an array or resource itesms', () => {
+        const state = insertOrUpdateEntities({}, initialJsonApiResponse);
+        const result = setRelationshipOnEntity(state, 'articles', '1', 'comments', [
+            { type: 'comments', id: '4444' },
+            { type: 'comments', id: '6666' }
+        ]);
+
+        expect(
+            (<iResourceObject[]>R.path(['articles', 'byId', '1', 'relationships', 'comments', 'data'], result))
+                .map(comment => comment.id)
+        ).toEqual(['4444', '6666']);
+    })
+});
+
+describe('clearRelationshipOnEntity', () => {
+    it('clears a relationship type', () => {
+        const state = insertOrUpdateEntities({}, initialJsonApiResponse);
+        const result = clearRelationshipOnEntity(state, 'articles', '1', 'comments');
+
+        expect(R.path(['articles', 'byId', '1', 'relationships', 'comments'], result)).toEqual(undefined);
+    });
+
+    it('does not fail on a non-existent relationship', () => {
+        const state = insertOrUpdateEntities({}, initialJsonApiResponse);
+        const result = clearRelationshipOnEntity(state, 'articles', '1', 'flavors');
+    });
+})
 
 describe('updateEntity', () => {
     it('updates an entity', () => {
@@ -114,6 +157,19 @@ describe('updateEntity', () => {
 
         expect(R.path(['articles', 'byId', '1', 'attributes', 'title'], result)).toEqual('New Title');
     });
+
+    it('updates an entity from a ResourceObject', () => {
+        const state = insertOrUpdateEntities({}, initialJsonApiResponse);
+        const result = updateEntity(state, {
+            type: 'articles',
+            id: '1',
+            attributes: {
+                title: 'New Title'
+            },
+        });
+
+        expect(R.path(['articles', 'byId', '1', 'attributes', 'title'], result)).toEqual('New Title');
+    })
 });
 
 describe('updateEntitiesMeta', () => {

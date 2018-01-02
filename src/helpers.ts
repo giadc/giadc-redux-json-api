@@ -1,7 +1,6 @@
 import * as pluralize from 'pluralize';
 import * as R from 'ramda';
-import { Entity, ResourceObject, JsonApiResponse, JsonApiResponseWithData, Attributes } from 'ts-json-api';
-import * as uuid from 'uuid';
+import { Entity, iAttributes, iResourceObject, JsonApiResponse, iJsonApiResponseWithData } from 'ts-json-api';
 
 import { iState } from './interfaces/state';
 import { isObject } from 'util';
@@ -16,24 +15,19 @@ import { isObject } from 'util';
  */
 export const getEntity = (state: iState, key: string, id: string) => {
     const pluralKey = pluralize(key);
-    const entity = R.path([pluralKey, 'byId', id], state) as ResourceObject;
-
-    return (entity === undefined)
-        ? undefined
-        : new Entity(entity);
+    return R.path([pluralKey, 'byId', id], state) as iResourceObject;
 };
 
 /**
  * Get an array of Entities from the state
  */
-export const getEntities = (state: iState, key: string, ids: string[] | null = null): Entity[] => {
+export const getEntities = (state: iState, key: string, ids: string[] | null = null): iResourceObject[] => {
     const pluralKey = pluralize(key);
 
     if (ids === null) {
         return R.pipe(
             R.pathOr({}, [pluralKey, 'byId']),
-            R.values,
-            R.map(convertToEntityObject)
+            R.values
         )(state);
     }
 
@@ -42,9 +36,8 @@ export const getEntities = (state: iState, key: string, ids: string[] | null = n
     return R.pipe(
         R.pathOr({}, [key, 'byId']),
         R.props(ids),
-        R.reject(isUndefined),
-        R.map(convertToEntityObject),
-    )(state);
+        R.reject(isUndefined)
+    )(state) as iResourceObject[];
 };
 
 /**
@@ -53,8 +46,7 @@ export const getEntities = (state: iState, key: string, ids: string[] | null = n
  * @param  {Object} jsonData
  * @return {String}
  */
-export const getId = (jsonData: JsonApiResponseWithData): string =>
-    (<ResourceObject>jsonData.data).id;
+export const getId = R.path(['data', 'id']);
 
 /**
  * Grab the ID's from a JSON API response containing an array of Entities
@@ -62,8 +54,10 @@ export const getId = (jsonData: JsonApiResponseWithData): string =>
  * @param  {Object} jsonData
  * @return {Array}
  */
-export const getIds = (jsonData: JsonApiResponseWithData): string[] =>
-    (<ResourceObject[]>jsonData.data).map(entity => entity.id);
+export const getIds = R.pipe(
+    R.prop('data'),
+    R.map(R.prop('id'))
+);
 
 /**
  * Grab an Entity group's meta data from the state
@@ -98,5 +92,3 @@ export const getEntityMeta = (
         ? R.path([entityKey, 'byId', entityId, 'meta'], state)
         : R.path([entityKey, 'byId', entityId, 'meta', metaKey], state)
 );
-
-const convertToEntityObject = (entity: ResourceObject) => new Entity(entity);

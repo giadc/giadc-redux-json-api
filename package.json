@@ -15,10 +15,10 @@
   },
   "author": "Ryan Marganti <rmarganti@gannett.com>",
   "license": "MIT",
+  "types": "./types/giadc-redux-json-api.d.ts",
   "dependencies": {
     "pluralize": "^1.2.1",
-    "ramda": "^0.25.0",
-    "uuid": "^3.0.0"
+    "ramda": "^0.25.0"
   },
   "devDependencies": {
     "@types/pluralize": "^0.0.28",

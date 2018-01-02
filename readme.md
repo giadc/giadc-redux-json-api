@@ -24,21 +24,45 @@ const store = createStore(
 ```javascript
 import { loadJsonApiEntityData } from 'giadc-redux-json-api';
 
+/**
+ * Load a JSONAPI response into the store.
+ */
 dispatch(loadJsonApiEntityData(jsonApiResponseFromServer));
 ```
 
 ## Manipulating entities
 ```javascript
-import { addRelationshipToEntity, removeRelationshipFromEntity, updateEntity } from 'giadc-reduc-json-api';
+import {
+    addRelationshipToEntity, clearRelationshipOnEntity, removeRelationshipFromEntity,
+    setRelationshipOnEntity, updateEntity,
+} from 'giadc-reduc-json-api';
 
 /**
+ * Update an entity's attributes
+ *
  * dispatch(updateEntity('article', articleId, {
  *     isUserFavorite: true
  * }));
  */
 updateEntity(entityKey, entityId, dataObject);
 
+
 /**
+ * You can also update an entity by passing the entire resource object
+ *
+ * dispatch(updateEntity({
+ *     type: 'people',
+ *     id: '4444',
+ *     data: {
+ *         firstName: 'Lorenzo',
+ *     },
+ * }));
+ */
+updateEntity(resourceObject);
+
+/**
+ * Use `addRelationshipToEntity` when working with to-many relationships
+ *
  * dispatch(addRelationshipToEntity('article', '54321', 'readers', {
  *     type: 'user',
  *     id: '12345',
@@ -48,10 +72,33 @@ updateEntity(entityKey, entityId, dataObject);
 addRelationshipToEntity(entityKey, entityId, relationshipKey, relationshipJsonApiObject);
 
 /**
- * You can also add relationships by ID.
- * dispatch(addRelationshipToEntity('article', '54321', 'readers', '12345'));
+ * Replace a relationship. This is useful when working with `to-one`
+ * relationships or completely replacing a to-many relationship.
+ *
+ * dispatch(setRelationshipOnEntity('article', '54321', 'editor', {
+ *     type: 'user',
+ *     id: '54445',
+ * }));
+ *
+ * dispatch(setRelationshipOnEntity('article', '54321', 'readers', [
+ *     {
+ *         type: 'user',
+ *         id: '54445',
+ *     },
+ *     {
+ *         type: 'user',
+ *         id: '99990',
+ *     },
+ * ]));
  */
-addRelationshipToEntity(entityKey, entityId, relationshipKey, relationshipJsonApiObject);
+setRelationshippOnEntity(entityKey, entityId, relationshipKey, resourceObjectOrResourceCollection);
+
+/**
+ * Completely clear a relationship
+ *
+ * dispatch(clearRelationshipOnEntity('article', '54321', 'comments'));
+ */
+clearRelationshipOnEntity(entityKey, entityId, relationshipKey);
 
 
 // dispatch(removeRelationshipFromEntity('article', '54321', 'readers', '12345'));

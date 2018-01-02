@@ -1,14 +1,15 @@
-import { Attributes, JsonApiResponseWithData, ResourceObject } from "ts-json-api";
+import { iAttributes } from "ts-json-api";
+import { FlexiblePayload } from './other';
 export interface iLoadAction {
     type: string;
-    data: JsonApiResponseWithData;
+    data: FlexiblePayload;
 }
 export interface iAddRelationshipAction {
     type: string;
     entityKey: string;
     entityId: string;
     relationshipKey: string;
-    relationshipObject: ResourceObject | JsonApiResponseWithData;
+    relationshipObject: FlexiblePayload;
 }
 export interface iRemoveRelationshipAction {
     type: string;
@@ -16,6 +17,13 @@ export interface iRemoveRelationshipAction {
     entityId: string;
     relationshipKey: string;
     relationshipId: string;
+}
+export interface iSetRelationshipAction {
+    type: string;
+    entityKey: string;
+    entityId: string;
+    relationshipKey: string;
+    relationshipObject: FlexiblePayload;
 }
 export interface iUpdateEntitiesMetaAction {
     type: string;
@@ -34,7 +42,7 @@ export interface iUpdateEntityAction {
     type: string;
     entityKey: string;
     entityId: string;
-    data: Attributes;
+    data: iAttributes;
 }
 export interface iRemoveEntityAction {
     type: string;
@@ -45,4 +53,4 @@ export interface iClearEntityTypeAction {
     type: string;
     entityKey: string;
 }
-export declare type Action = iLoadAction | iAddRelationshipAction | iRemoveRelationshipAction | iUpdateEntitiesMetaAction | iUpdateEntityMetaAction | iUpdateEntityAction | iRemoveEntityAction | iClearEntityTypeAction;
+export declare type Action = iLoadAction | iAddRelationshipAction | iRemoveRelationshipAction | iSetRelationshipAction | iUpdateEntitiesMetaAction | iUpdateEntityMetaAction | iUpdateEntityAction | iRemoveEntityAction | iClearEntityTypeAction;

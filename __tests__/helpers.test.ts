@@ -1,5 +1,5 @@
 import * as R from 'ramda';
-import { JsonApiResponseWithData } from 'ts-json-api';
+import { iJsonApiResponseWithData } from 'ts-json-api';
 
 import {
     getEntity,
@@ -12,7 +12,7 @@ import {
 
 import { iState } from '../src/interfaces/state';
 
-import { initialJsonApiResponse } from './exampleData';
+import { commentJsonResponse, initialJsonApiResponse } from './exampleData';
 import { insertOrUpdateEntities } from '../src/json-api-transformer';
 
 const reverseMerge = R.flip(R.merge);
@@ -28,9 +28,9 @@ describe('getEntity', () => {
     it('should return an entity', () => {
         const entity = getEntity(<iState>state, 'article', '1');
 
-        expect(entity.id()).toEqual('1');
-        expect(entity.type()).toEqual('articles');
-        expect(entity.attributes()).toEqual({
+        expect(entity.id).toEqual('1');
+        expect(entity.type).toEqual('articles');
+        expect(entity.attributes).toEqual({
             'title': 'JSON API paints my bikeshed!',
         });
     });
@@ -43,11 +43,11 @@ describe('getEntity', () => {
 describe('getEntities', () => {
     it('should return all entities', () => {
         const results = getEntities(<iState>state, 'comments');
-        expect(results[0].attributes()).toEqual({
+        expect(results[0].attributes).toEqual({
             "body": "First!",
         });
 
-        expect(results[1].attributes()).toEqual({
+        expect(results[1].attributes).toEqual({
             "body": "I like XML better",
         });
     });
@@ -55,11 +55,11 @@ describe('getEntities', () => {
     it('should return a subset of entities', () => {
         const results = getEntities(<iState>state, 'comments', ["5", "12"]);
 
-        expect(results[0].attributes()).toEqual({
+        expect(results[0].attributes).toEqual({
             "body": "First!",
         });
 
-        expect(results[1].attributes()).toEqual({
+        expect(results[1].attributes).toEqual({
             "body": "I like XML better",
         });
     });
@@ -67,7 +67,7 @@ describe('getEntities', () => {
     it('should return only entities that exist', () => {
         const results = getEntities(<iState>state, 'comments', ["5", "666"]);
         expect(results.length).toEqual(1);
-        expect(results[0].attributes()).toEqual({
+        expect(results[0].attributes).toEqual({
             "body": "First!",
         });
     });
@@ -80,8 +80,7 @@ describe('getEntities', () => {
 
 describe('getId', () => {
     it('should return a single id', () => {
-        const jsonResponse = {"data":{"type":"article","id":"ba1582be-15d9-454e-ac8a-5ff9d2139d4d","attributes":{"title":"RootPage","slug":"root_page","path":"/root_page","published":true,"updatedAt":"2016-04-2616:16:06","isUserFavorite":true,"userCanEdit":true,"index":[{"level":"2","name":"heading-1","title":"Setup"},{"level":"2","name":"heading-2","title":"Config"},{"level":"2","name":"heading-3","title":"UsingthePackage"},{"level":"2","name":"heading-4","title":"ProcessingtheQueue"}]}}};
-        expect(getId(jsonResponse)).toEqual("ba1582be-15d9-454e-ac8a-5ff9d2139d4d");
+        expect(getId(commentJsonResponse)).toEqual('44');
     });
 });
 

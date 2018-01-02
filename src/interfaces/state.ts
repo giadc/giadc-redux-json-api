@@ -1,10 +1,10 @@
-import { Meta, ResourceObject } from 'ts-json-api';
+import { iMeta, iResourceObject } from 'ts-json-api';
 import { Action } from './actions';
 
 export interface iEntityCollection {
-    meta: Meta,
+    meta: iMeta,
     byId: {
-        [index: string]: ResourceObject,
+        [index: string]: iResourceObject,
     }
 }
 

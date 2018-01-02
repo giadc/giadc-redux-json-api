@@ -1,5 +1,5 @@
 import * as R from 'ramda';
-import { ResourceObject } from 'ts-json-api';
+import { iResourceObject } from 'ts-json-api';
 
 import { reducer } from '../src/giadc-redux-json-api';
 import actionNames from '../src/action-names';
@@ -20,7 +20,7 @@ describe('reducer', () => {
         expect(Object.keys(initialExpectedState).sort()).toEqual(['articles', 'comments', 'people']);
         expect(R.path(['articles', 'byId', '1', 'relationships', 'author', 'data', 'id'], initialExpectedState)).toEqual('9');
         expect(
-            (<ResourceObject[]>R.path(['articles', 'byId', '1', 'relationships', 'comments', 'data'], initialExpectedState))
+            (<iResourceObject[]>R.path(['articles', 'byId', '1', 'relationships', 'comments', 'data'], initialExpectedState))
             .map(comment => comment.id)
         ).toEqual(['5', '12']);
     });
@@ -47,7 +47,7 @@ describe('reducer', () => {
 
         expect(R.path(['comments', 'byId', '44'], result)).toBeTruthy;
         expect(
-            (<ResourceObject[]>R.path(['articles', 'byId', '1', 'relationships', 'comments', 'data'], result))
+            (<iResourceObject[]>R.path(['articles', 'byId', '1', 'relationships', 'comments', 'data'], result))
                 .map(comment => comment.id)
         ).toEqual(['5', '12', '44']);
     });
@@ -61,9 +61,41 @@ describe('reducer', () => {
             relationshipId: '5'
         });
         expect(
-            (<ResourceObject[]>R.path(['articles', 'byId', '1', 'relationships', 'comments', 'data'], result))
+            (<iResourceObject[]>R.path(['articles', 'byId', '1', 'relationships', 'comments', 'data'], result))
                 .map(comment => comment.id)
         ).toEqual(['12']);
+    });
+
+    it('should handle a SET_RELATIONSHIP_ON_ENTITY', () => {
+        const result = reducer(initialExpectedState, {
+            type: actionNames.SET_RELATIONSHIP_ON_ENTITY + '_ARTICLE_EDITOR',
+            entityKey: 'article',
+            entityId: '1',
+            relationshipKey: 'editor',
+            relationshipObject: {
+                type: 'people',
+                id: '999',
+                attributes: {
+                    'first-name': 'Triet',
+                    'last-name': 'Hill',
+                    'twitter': 't_swizzle'
+                }
+            }
+        });
+
+        expect(R.path(['articles', 'byId', '1', 'relationships', 'editor', 'data', 'id'], result)).toEqual('999');
+        expect(R.path(['people', 'byId', '999', 'attributes', 'first-name'], result)).toEqual('Triet');
+    });
+
+    it('should handle a CLEAR_RELATIONSHIP_ON_ENTITY', () => {
+        const result = reducer(initialExpectedState, {
+            type: actionNames.CLEAR_RELATIONSHIP_ON_ENTITY + '_ARTICLE_COMMENTS',
+            entityKey: 'article',
+            entityId: '1',
+            relationshipKey: 'comments',
+        });
+
+        expect(R.path(['articles', 'byId', '1', 'relationships', 'comments'], result)).toBeUndefined();
     });
 
     it('should handle UPDATE_ENTITY', () => {

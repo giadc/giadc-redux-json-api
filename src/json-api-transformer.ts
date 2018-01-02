@@ -1,9 +1,10 @@
 import * as pluralize from 'pluralize';
 import * as R from 'ramda';
-import { Attributes, ResourceObject, JsonApiResponseWithData } from 'ts-json-api';
+import { iAttributes, iResourceObject, iJsonApiResponseWithData } from 'ts-json-api';
 
 import { iState } from './interfaces/state';
-import { ensureArray, partializeEntity, reverseMergeDeepLeft } from './utils';
+import { FlexiblePayload } from './interfaces/other';
+import { appendOrConcat, ensureArray, mapOrOnce, partializeEntity, reverseMergeDeepLeft, unwrapDataProp } from './utils';
 
 /**
  * Insert an Entity or group of Entities
@@ -14,16 +15,16 @@ import { ensureArray, partializeEntity, reverseMergeDeepLeft } from './utils';
  */
 export const insertOrUpdateEntities = (
     state: iState,
-    payload: JsonApiResponseWithData | ResourceObject | ResourceObject[]
+    payload: FlexiblePayload
 ): iState => {
-    const entities = (<JsonApiResponseWithData>payload).data || [payload];
-    const included = (<JsonApiResponseWithData>payload).included || [];
+    const included: iResourceObject[] = R.propOr([], 'included', payload);
 
     return R.pipe(
+        unwrapDataProp,
         ensureArray,
         R.concat(included),
         R.reduce(insertOrUpdateEntity, state)
-    )(entities);
+    )(payload);
 };
 
 /**
@@ -32,13 +33,14 @@ export const insertOrUpdateEntities = (
  * @param state
  * @param entity
  */
-const insertOrUpdateEntity = (state:iState = {}, entity: ResourceObject): iState => {
+const insertOrUpdateEntity = (state: iState = {}, entity: iResourceObject): iState => {
     validateEntity(entity);
 
     return R.over(
         R.lensPath([pluralize(entity.type), 'byId', entity.id]),
-        reverseMergeDeepLeft(entity)
-    )(state);
+        reverseMergeDeepLeft(entity),
+        state,
+    );
 };
 
 /**
@@ -46,7 +48,7 @@ const insertOrUpdateEntity = (state:iState = {}, entity: ResourceObject): iState
  *
  * @param  {Object} entity
  */
-const validateEntity = (entity: ResourceObject) => {
+const validateEntity = (entity: iResourceObject) => {
     if (!('type' in entity)) {
         throw new Error('JSON API resource objects must have a `type` property');
     }
@@ -72,39 +74,29 @@ export const addRelationshipToEntity = (
     entityKey: string,
     entityId: string,
     relationshipKey: string,
-    relationshipObject: JsonApiResponseWithData | ResourceObject
+    relationshipObject: FlexiblePayload
 ): iState => {
+    const unwrappedRelationshipObject = unwrapDataProp(relationshipObject);
+    const newState = insertOrUpdateEntities(initialState, unwrappedRelationshipObject);
 
-    const wrappedRelationshipObject: JsonApiResponseWithData = (!(<JsonApiResponseWithData>relationshipObject).data)
-        ? { data: <ResourceObject>relationshipObject }
-        : <JsonApiResponseWithData>relationshipObject;
-
-    if (Array.isArray(wrappedRelationshipObject.data)) {
-        return wrappedRelationshipObject.data.reduce((carrier, singleItem) =>
-            addRelationshipToEntity(carrier, entityKey, entityId, relationshipKey, singleItem),
-            initialState
-        );
-    }
-
-    const newState = insertOrUpdateEntities(initialState, wrappedRelationshipObject);
     const pluralEntityKey = pluralize(entityKey);
-
-    const relationshipLens = R.lensPath([pluralEntityKey, 'byId', entityId, 'relationships', relationshipKey, 'data']);
+    const simplifiedEntities = mapOrOnce(partializeEntity, unwrappedRelationshipObject);
 
     return R.over(
-        relationshipLens,
-        R.append(partializeEntity(wrappedRelationshipObject.data))
-    )(newState);
+        R.lensPath([pluralEntityKey, 'byId', entityId, 'relationships', relationshipKey, 'data']),
+        appendOrConcat(simplifiedEntities),
+        newState
+    );
 };
 
 /**
  * Remove a relationship an Entity
  *
- * @param  {Object} initialState
- * @param  {String} entityKey
- * @param  {String} entityId
- * @param  {String} relationshipKey
- * @param  {String} relationshipId
+ * @param  initialState
+ * @param  entityKey  Type of entity on which to set relationship
+ * @param  entityId  ID of entity on which to set relationship
+ * @param  relationshipKey  Name of the relationship
+ * @param  relationshipId  Id of the relationship object
  * @return {Object}
  */
 export const removeRelationshipFromEntity = (
@@ -115,11 +107,59 @@ export const removeRelationshipFromEntity = (
     relationshipId: string
 ): iState => {
     const pluralEntityKey = pluralize(entityKey);
-    const lens = R.lensPath([pluralEntityKey, 'byId', entityId, 'relationships', relationshipKey, 'data']);
 
     return R.over(
-        lens,
+        R.lensPath([pluralEntityKey, 'byId', entityId, 'relationships', relationshipKey, 'data']),
         R.reject(R.propEq('id', relationshipId)),
+        initialState
+    );
+};
+
+/**
+ * Set a relationship on an Entity to another Entity or Entities
+ *
+ * @param initialState
+ * @param entityKey  Type of entity on which to set relationship
+ * @param entityId  ID of entity on which to set relationship
+ * @param relationshipKey  Name of the relationship
+ * @param relationshipObject  Can be a JsonApiResponse, a Resource Object, or an array of Resource Objects
+ */
+export const setRelationshipOnEntity = (
+    initialState: iState,
+    entityKey: string,
+    entityId: string,
+    relationshipKey: string,
+    relationshipObject: FlexiblePayload
+): iState => {
+    const unwrappedRelationshipObject = unwrapDataProp(relationshipObject);
+    const newState = insertOrUpdateEntities(initialState, unwrappedRelationshipObject);
+    const pluralEntityKey = pluralize(entityKey);
+
+    return R.set(
+        R.lensPath([pluralEntityKey, 'byId', entityId, 'relationships', relationshipKey, 'data']),
+        mapOrOnce(partializeEntity, unwrappedRelationshipObject),
+        newState
+    );
+}
+
+/**
+ * Completely clear a relationship type on an entity
+ *
+ * @param initialState
+ * @param entityKey Type of entity who owns the relationship
+ * @param entityId  Id of entity who owns the relationship
+ * @param relationshipKey Name of relationship to clear
+ */
+export const clearRelationshipOnEntity = (
+    initialState: iState,
+    entityKey: string,
+    entityId: string,
+    relationshipKey: string
+): iState => {
+    const pluralEntityKey = pluralize(entityKey);
+
+    return R.dissocPath(
+        [pluralEntityKey, 'byId', entityId, 'relationships', relationshipKey],
         initialState
     );
 };
@@ -135,16 +175,19 @@ export const removeRelationshipFromEntity = (
  */
 export const updateEntity = (
     state: iState,
-    entityKey: string,
-    entityId: string,
-    data: ResourceObject | Attributes
+    entityKeyOrResourceObject: string | iResourceObject,
+    entityId?: string,
+    data?: iResourceObject | iAttributes
 ) => {
-    const attributeLens = R.lensPath([pluralize(entityKey), 'byId', entityId, 'attributes']);
+    if (R.has('type', entityKeyOrResourceObject) && R.has('id', entityKeyOrResourceObject)) {
+        return insertOrUpdateEntity(state, <iResourceObject>entityKeyOrResourceObject);
+    }
 
     return R.over(
-        attributeLens,
-        reverseMergeDeepLeft(data)
-    )(state);
+        R.lensPath([pluralize(<string>entityKeyOrResourceObject), 'byId', entityId, 'attributes']),
+        reverseMergeDeepLeft(data),
+        state
+    );
 };
 
 /**
@@ -182,7 +225,7 @@ export const updateEntityMeta = (
     state: iState,
     entityKey: string,
     entityId: string,
-    metaKey: string,
+    metaKey: string | undefined,
     value: any
 ): iState => {
     const pluralKey = pluralize(entityKey);

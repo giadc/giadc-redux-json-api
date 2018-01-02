@@ -1,4 +1,4 @@
-import { Entity, JsonApiResponseWithData } from 'ts-json-api';
+import { Entity, iJsonApiResponseWithData } from 'ts-json-api';
 import { iState } from './interfaces/state';
 /**
  * Grab an Entity from the state
@@ -19,14 +19,14 @@ export declare const getEntities: (state: iState, key: string, ids?: string[]) =
  * @param  {Object} jsonData
  * @return {String}
  */
-export declare const getId: (jsonData: JsonApiResponseWithData) => string;
+export declare const getId: (jsonData: iJsonApiResponseWithData) => string;
 /**
  * Grab the ID's from a JSON API response containing an array of Entities
  *
  * @param  {Object} jsonData
  * @return {Array}
  */
-export declare const getIds: (jsonData: JsonApiResponseWithData) => string[];
+export declare const getIds: (jsonData: iJsonApiResponseWithData) => string[];
 /**
  * Grab an Entity group's meta data from the state
  *

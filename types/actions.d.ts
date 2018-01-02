@@ -1,109 +1,75 @@
-import { JsonApiResponse } from 'ts-json-api';
+import { iAttributes } from 'ts-json-api';
+import { iLoadAction, iAddRelationshipAction, iRemoveRelationshipAction, iSetRelationshipAction, iUpdateEntitiesMetaAction, iUpdateEntityMetaAction, iUpdateEntityAction, iRemoveEntityAction, iClearEntityTypeAction } from './interfaces/actions';
+import { FlexiblePayload } from './interfaces/other';
 /**
  * Load a JSON API response into the state
  *
  * @param  {Object} data
  * @return {Object}
  */
-export declare const loadJsonApiEntityData: (data: JsonApiResponse) => {
-    type: string;
-    data: JsonApiResponse;
-};
+export declare const loadJsonApiEntityData: (data: FlexiblePayload) => iLoadAction;
 /**
  * Add a relationship to an Entity
  *
- * @param  {String} entityKey
- * @param  {String} entityId
- * @param  {String} relationshipKey
- * @param  {Object} relationshipObject
- * @return {Object}
+ * @param  entityKey
+ * @param  entityId
+ * @param  relationshipKey
+ * @param  relationshipObject
  */
-export declare const addRelationshipToEntity: (entityKey: string, entityId: string, relationshipKey: string, relationshipObject: JsonApiResponse) => {
-    type: string;
-    entityKey: string;
-    entityId: string;
-    relationshipKey: string;
-    relationshipObject: JsonApiResponse;
-};
+export declare const addRelationshipToEntity: (entityKey: string, entityId: string, relationshipKey: string, relationshipObject: FlexiblePayload) => iAddRelationshipAction;
+/**
+ * Set a relationship on an Entity
+ *
+ * @param entityKey
+ * @param entityId
+ * @param relationshipKey
+ * @param relationshipId
+ */
+export declare const setRelationshipOnEntity: (entityKey: string, entityId: string, relationshipKey: string, relationshipObject: FlexiblePayload) => iSetRelationshipAction;
 /**
  * Remove a relationship from an Entity
  *
- * @param  {String} entityKey
- * @param  {String} entityId
- * @param  {String} relationshipKey
- * @param  {String} relationshipId
- * @return {Object}
+ * @param  entityKey
+ * @param  entityId
+ * @param  relationshipKey
+ * @param  relationshipId
  */
-export declare const removeRelationshipFromEntity: (entityKey: string, entityId: string, relationshipKey: string, relationshipId: string) => {
-    type: string;
-    entityKey: string;
-    entityId: string;
-    relationshipKey: string;
-    relationshipId: string;
-};
+export declare const removeRelationshipFromEntity: (entityKey: string, entityId: string, relationshipKey: string, relationshipId: string) => iRemoveRelationshipAction;
 /**
  * Update an Entity's attributes
  *
- * @param  {String} entityKey
- * @param  {String} entityId
+ * @param  entityKey
+ * @param  entityId
  * @param  {Object} data
- * @return {Object}
  */
-export declare const updateEntity: (entityKey: string, entityId: string, data: JsonApiResponse) => {
-    type: string;
-    entityKey: string;
-    entityId: string;
-    data: JsonApiResponse;
-};
+export declare const updateEntity: (entityKey: string, entityId: string, data: iAttributes) => iUpdateEntityAction;
 /**
  * Update an Entity group's meta data
  *
- * @param  {String} entityKey
- * @param  {String} metaKey
- * @param  {Mixed}  value
- * @return {Object}
+ * @param  entityKey
+ * @param  metaKey
+ * @param  value
  */
-export declare const updateEntitiesMeta: (entityKey: string, metaKey: string, value: any) => {
-    type: string;
-    entityKey: string;
-    metaKey: string;
-    value: any;
-};
+export declare const updateEntitiesMeta: (entityKey: string, metaKey: string, value: any) => iUpdateEntitiesMetaAction;
 /**
  * Update an Entity's meta data
  *
- * @param  {String} entityKey
- * @param  {String} entityId
- * @param  {String} metaKey
- * @param  {Mixed}  value
- * @return {Object}
+ * @param  entityKey
+ * @param  entityId
+ * @param  metaKey
+ * @param  value
  */
-export declare const updateEntityMeta: (entityKey: string, entityId: string, metaKey: string, value: any) => {
-    type: string;
-    entityKey: string;
-    entityId: string;
-    metaKey: string;
-    value: any;
-};
+export declare const updateEntityMeta: (entityKey: string, entityId: string, metaKey: string, value: any) => iUpdateEntityMetaAction;
 /**
  * Remove a single Entity
  *
- * @param  {String} entityKey
- * @param  {String} entityId
- * @return {Object}
+ * @param  entityKey
+ * @param  entityId
  */
-export declare const removeEntity: (entityKey: string, entityId: string) => {
-    type: string;
-    entityKey: string;
-    entityId: string;
-};
+export declare const removeEntity: (entityKey: string, entityId: string) => iRemoveEntityAction;
 /**
  * Clear all the Entities from an Entity type
  *
- * @param  {String} entityKey
- * @return {Object}
+ * @param  entityKey
  */
-export declare const clearEntityType: (entityKey: string) => {
-    type: string;
-    entityKey: string;
-};
+export declare const clearEntityType: (entityKey: string) => iClearEntityTypeAction;

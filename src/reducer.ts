@@ -7,9 +7,11 @@ import {
     insertOrUpdateEntities,
     removeEntity,
     removeRelationshipFromEntity,
+    setRelationshipOnEntity,
     updateEntity,
     updateEntitiesMeta,
     updateEntityMeta,
+    clearRelationshipOnEntity,
 } from './json-api-transformer'
 
 const reducerMap = {
@@ -29,6 +31,21 @@ const reducerMap = {
         action.entityId,
         action.relationshipKey,
         action.relationshipId
+    ),
+
+    [actionNames.SET_RELATIONSHIP_ON_ENTITY]: (state: iState, action: actions.iSetRelationshipAction) => setRelationshipOnEntity(
+        state,
+        action.entityKey,
+        action.entityId,
+        action.relationshipKey,
+        action.relationshipObject
+    ),
+
+    [actionNames.CLEAR_RELATIONSHIP_ON_ENTITY]: (state: iState, action: actions.iClearRelationshipAction) => clearRelationshipOnEntity(
+        state,
+        action.entityKey,
+        action.entityId,
+        action.relationshipKey,
     ),
 
     [actionNames.UPDATE_ENTITIES_META]: (state: iState, action: actions.iUpdateEntitiesMetaAction) => updateEntitiesMeta(

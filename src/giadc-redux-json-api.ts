@@ -15,7 +15,10 @@ export {
     loadJsonApiEntityData,
     removeRelationshipFromEntity,
     removeEntity,
+    setRelationshipOnEntity,
     updateEntity,
     updateEntityMeta,
     updateEntitiesMeta,
 } from './actions';
+
+export { FlexiblePayload } from './interfaces/other';
