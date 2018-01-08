@@ -14,12 +14,16 @@ export declare const reverseMergeDeepLeft: (arg1: {}, arg0?: any) => <B>(b: B) =
  */
 export declare const partializeEntity: <T, U>(obj: T) => U;
 /**
+ * Remove an object's wrapping `data` prop, if it exists
+ */
+export declare const unwrapDataProp: (a: any) => any;
+/**
  * Apply a function in a map if the given data is an array.
  * Otherwise, simply apply it once to the data
  *
  * @param func Function to perform
  */
-export declare const mapOrOnce: (func: (input: any) => any) => (a: any) => any;
+export declare const mapOrOnce: (...a: any[]) => any;
 /**
  * If the given data is an array, concat it.
  * If it is a single item, append it.

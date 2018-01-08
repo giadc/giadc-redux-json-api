@@ -3,6 +3,7 @@ declare const _default: {
     ADD_RELATIONSHIP_TO_ENTITY: string;
     REMOVE_RELATIONSHIP_FROM_ENTITY: string;
     SET_RELATIONSHIP_ON_ENTITY: string;
+    CLEAR_RELATIONSHIP_ON_ENTITY: string;
     UPDATE_ENTITY: string;
     UPDATE_ENTITIES_META: string;
     UPDATE_ENTITY_META: string;

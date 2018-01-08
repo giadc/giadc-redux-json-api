@@ -1,5 +1,5 @@
 import { iAttributes } from 'ts-json-api';
-import { iLoadAction, iAddRelationshipAction, iRemoveRelationshipAction, iSetRelationshipAction, iUpdateEntitiesMetaAction, iUpdateEntityMetaAction, iUpdateEntityAction, iRemoveEntityAction, iClearEntityTypeAction } from './interfaces/actions';
+import { iLoadAction, iAddRelationshipAction, iRemoveRelationshipAction, iSetRelationshipAction, iClearRelationshipAction, iUpdateEntitiesMetaAction, iUpdateEntityMetaAction, iUpdateEntityAction, iRemoveEntityAction, iClearEntityTypeAction } from './interfaces/actions';
 import { FlexiblePayload } from './interfaces/other';
 /**
  * Load a JSON API response into the state
@@ -35,6 +35,7 @@ export declare const setRelationshipOnEntity: (entityKey: string, entityId: stri
  * @param  relationshipId
  */
 export declare const removeRelationshipFromEntity: (entityKey: string, entityId: string, relationshipKey: string, relationshipId: string) => iRemoveRelationshipAction;
+export declare const clearRelationshipOnEntity: (entityKey: string, entityId: string, relationshipKey: string) => iClearRelationshipAction;
 /**
  * Update an Entity's attributes
  *

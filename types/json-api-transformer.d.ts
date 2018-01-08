@@ -24,11 +24,11 @@ export declare const addRelationshipToEntity: (initialState: iState, entityKey: 
 /**
  * Remove a relationship an Entity
  *
- * @param  {Object} initialState
- * @param  {String} entityKey
- * @param  {String} entityId
- * @param  {String} relationshipKey
- * @param  {String} relationshipId
+ * @param  initialState
+ * @param  entityKey  Type of entity on which to set relationship
+ * @param  entityId  ID of entity on which to set relationship
+ * @param  relationshipKey  Name of the relationship
+ * @param  relationshipId  Id of the relationship object
  * @return {Object}
  */
 export declare const removeRelationshipFromEntity: (initialState: iState, entityKey: string, entityId: string, relationshipKey: string, relationshipId: string) => iState;
@@ -43,6 +43,15 @@ export declare const removeRelationshipFromEntity: (initialState: iState, entity
  */
 export declare const setRelationshipOnEntity: (initialState: iState, entityKey: string, entityId: string, relationshipKey: string, relationshipObject: FlexiblePayload) => iState;
 /**
+ * Completely clear a relationship type on an entity
+ *
+ * @param initialState
+ * @param entityKey Type of entity who owns the relationship
+ * @param entityId  Id of entity who owns the relationship
+ * @param relationshipKey Name of relationship to clear
+ */
+export declare const clearRelationshipOnEntity: (initialState: iState, entityKey: string, entityId: string, relationshipKey: string) => iState;
+/**
  * Update an Entity's attributes
  *
  * @param  {Object} state
@@ -51,7 +60,7 @@ export declare const setRelationshipOnEntity: (initialState: iState, entityKey: 
  * @param  {Object} data
  * @return {Object}
  */
-export declare const updateEntity: (state: iState, entityKey: string, entityId: string, data: iAttributes | iResourceObject) => iState;
+export declare const updateEntity: (state: iState, entityKeyOrResourceObject: string | iResourceObject, entityId?: string, data?: iAttributes | iResourceObject) => iState;
 /**
  * Update the meta data for an Entity group
  *

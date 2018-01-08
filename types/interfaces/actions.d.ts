@@ -25,6 +25,12 @@ export interface iSetRelationshipAction {
     relationshipKey: string;
     relationshipObject: FlexiblePayload;
 }
+export interface iClearRelationshipAction {
+    type: string;
+    entityKey: string;
+    entityId: string;
+    relationshipKey: string;
+}
 export interface iUpdateEntitiesMetaAction {
     type: string;
     entityKey: string;
